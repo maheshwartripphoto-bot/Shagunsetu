@@ -1,271 +1,59 @@
 {% extends "base.html" %}
-{% block title %}Create Your Wedding — ShagunSetu{% endblock %}
+
+{% block title %}Create Auspicious E-Patrika | ShagunSetu{% endblock %}
+
 {% block content %}
+<div style="max-width: 800px; margin: 2rem auto; padding: 0 1rem;">
+  <div class="mandap-frame">
+    <div class="mandap-pillar-left"></div>
+    <div class="mandap-pillar-right"></div>
 
-<nav class="max-w-3xl mx-auto px-5 py-6 flex items-center justify-between">
-  <a href="/" class="font-display text-xl text-emerald font-semibold">Shagun<span class="text-gold">Setu</span></a>
-  <div class="flex gap-2" id="progress-dots">
-    {% for i in range(1,6) %}<span class="ss-progress-dot" data-dot="{{ i }}"></span>{% endfor %}
+    <div class="text-center">
+      <div class="mandap-arch"></div>
+      <div class="auspicious-symbol">🪔 || शुभ लग्न विवरण || 🪔</div>
+      <h2 class="wedding-title">Craft Your Wedding Invitation</h2>
+      <p style="color: var(--text-muted); font-style: italic;">Enter your ceremonial details to generate a royal card</p>
+    </div>
+
+    <form method="POST" action="/create" style="display: flex; flex-direction: column; gap: 1.4rem; margin-top: 2rem;">
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem;">
+        <div>
+          <label style="display: block; font-weight: 600; margin-bottom: 0.4rem; color: var(--mandap-crimson);">Groom's Full Name (वर)</label>
+          <input type="text" name="groom_name" placeholder="e.g. Rahul Sharma" required style="width: 100%;">
+        </div>
+        <div>
+          <label style="display: block; font-weight: 600; margin-bottom: 0.4rem; color: var(--mandap-crimson);">Bride's Full Name (वधू)</label>
+          <input type="text" name="bride_name" placeholder="e.g. Priya Patel" required style="width: 100%;">
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem;">
+        <div>
+          <label style="display: block; font-weight: 600; margin-bottom: 0.4rem; color: var(--mandap-crimson);">Wedding Date (विवाह तिथि)</label>
+          <input type="date" name="event_date" required style="width: 100%;">
+        </div>
+        <div>
+          <label style="display: block; font-weight: 600; margin-bottom: 0.4rem; color: var(--mandap-crimson);">Auspicious Muhurat Time (शुभ मुहूर्त)</label>
+          <input type="text" name="muhurat_time" placeholder="e.g. 07:15 PM Godhuli Bela" style="width: 100%;">
+        </div>
+      </div>
+
+      <div>
+        <label style="display: block; font-weight: 600; margin-bottom: 0.4rem; color: var(--mandap-crimson);">Wedding Venue (स्थान)</label>
+        <input type="text" name="venue" placeholder="e.g. Rajwada Palace, Indore" required style="width: 100%;">
+      </div>
+
+      <div>
+        <label style="display: block; font-weight: 600; margin-bottom: 0.4rem; color: var(--mandap-crimson);">Host Families &amp; Blessings Line</label>
+        <textarea name="host_family" rows="3" placeholder="e.g. With best compliments from Sharma & Patel Family..." style="width: 100%;"></textarea>
+      </div>
+
+      <div class="text-center" style="margin-top: 1rem;">
+        <button type="submit" class="btn-wedding-gold" style="width: 100%; max-width: 320px;">
+          Generate E-Patrika ✨
+        </button>
+      </div>
+    </form>
   </div>
-</nav>
-
-<main class="max-w-3xl mx-auto px-5 pb-24">
-
-  <!-- STEP 1 -->
-  <section class="ss-step ss-card p-7 sm:p-10 mb-4" data-step="1">
-    <p class="ss-chip mb-3">Step 1 of 5</p>
-    <h2 class="font-display text-2xl text-emerald mb-6">Couple Details</h2>
-    <div class="grid sm:grid-cols-2 gap-4">
-      <div><label class="ss-label">Bride Name *</label><input class="ss-input" id="bride_name" placeholder="Meera"></div>
-      <div><label class="ss-label">Groom Name *</label><input class="ss-input" id="groom_name" placeholder="Aarav"></div>
-      <div><label class="ss-label">Bride Family Name</label><input class="ss-input" id="bride_family" placeholder="Sharma Family"></div>
-      <div><label class="ss-label">Groom Family Name</label><input class="ss-input" id="groom_family" placeholder="Verma Family"></div>
-      <div><label class="ss-label">Wedding Date *</label><input type="date" class="ss-input" id="wedding_date"></div>
-      <div><label class="ss-label">City</label><input class="ss-input" id="city" placeholder="Indore"></div>
-      <div class="sm:col-span-2"><label class="ss-label">Wedding Venue</label><input class="ss-input" id="venue" placeholder="Regal Gardens, Indore"></div>
-      <div class="sm:col-span-2"><label class="ss-label">Wedding Description (optional)</label><textarea class="ss-textarea" id="description" rows="3" placeholder="A little about your journey together..."></textarea></div>
-      <div class="sm:col-span-2"><label class="ss-label">Couple Photo URL (optional)</label><input class="ss-input" id="cover_image" placeholder="https://..."></div>
-    </div>
-    <div class="flex justify-end mt-8"><button class="ss-btn ss-btn-primary" onclick="nextStep(1)">Continue →</button></div>
-  </section>
-
-  <!-- STEP 2 -->
-  <section class="ss-step ss-card p-7 sm:p-10 mb-4 hidden" data-step="2">
-    <p class="ss-chip mb-3">Step 2 of 5</p>
-    <h2 class="font-display text-2xl text-emerald mb-6">Wedding Settings</h2>
-    <div class="grid sm:grid-cols-2 gap-4">
-      <div class="sm:col-span-2"><label class="ss-label">Invitation Title</label><input class="ss-input" id="invitation_title" placeholder="Meera & Aarav"></div>
-      <div class="sm:col-span-2"><label class="ss-label">Invocation</label><input class="ss-input" id="invocation" value="|| \u0936\u094d\u0930\u0940 \u0917\u0923\u0947\u0936\u093e\u092f \u0928\u092e\u0903 ||"></div>
-      <div><label class="ss-label">UPI ID</label><input class="ss-input" id="upi_id" placeholder="name@upi"></div>
-      <div><label class="ss-label">UPI Payee Name</label><input class="ss-input" id="upi_name" placeholder="Meera & Aarav"></div>
-      <div class="sm:col-span-2"><label class="ss-label">WhatsApp Contact</label><input class="ss-input" id="whatsapp_contact" placeholder="+91 90000 00000"></div>
-    </div>
-    <div class="ss-divider"></div>
-    <p class="ss-label mb-3">Shagun Settings</p>
-    <label class="flex items-center gap-3 mb-3 text-sm"><input type="checkbox" id="enable_shagun" checked class="w-4 h-4"> Enable Digital Shagun</label>
-    <label class="flex items-center gap-3 text-sm"><input type="checkbox" id="enable_token" checked class="w-4 h-4"> Enable ₹1 Auspicious Token</label>
-    <div class="ss-divider"></div>
-    <p class="ss-label mb-3">Theme</p>
-    <div class="grid grid-cols-4 gap-3" id="theme-picker">
-      {% for t in ['classic','royal','minimal','floral'] %}
-      <button type="button" class="theme-option border-2 border-gold/30 rounded-xl py-3 text-xs font-semibold capitalize {% if loop.first %}ring-2 ring-gold{% endif %}" data-theme="{{ t }}" onclick="pickTheme('{{ t }}')">{{ t }}</button>
-      {% endfor %}
-    </div>
-    <div class="flex justify-between mt-8">
-      <button class="ss-btn ss-btn-outline" onclick="prevStep(2)">← Back</button>
-      <button class="ss-btn ss-btn-primary" onclick="nextStep(2)">Continue →</button>
-    </div>
-  </section>
-
-  <!-- STEP 3 -->
-  <section class="ss-step ss-card p-7 sm:p-10 mb-4 hidden" data-step="3">
-    <p class="ss-chip mb-3">Step 3 of 5</p>
-    <h2 class="font-display text-2xl text-emerald mb-2">Events</h2>
-    <p class="text-sm text-charcoal/60 mb-6">Add your wedding functions. Start from a template or add your own.</p>
-    <div class="flex flex-wrap gap-2 mb-6">
-      {% for t in event_templates %}
-      <button type="button" class="ss-btn ss-btn-outline text-xs py-2 px-4" onclick="addEventTemplate('{{ t }}')">+ {{ t }}</button>
-      {% endfor %}
-    </div>
-    <div id="events-list" class="space-y-4"></div>
-    <button type="button" class="ss-btn ss-btn-outline-gold text-sm mt-4" onclick="addEventTemplate('')">+ Add Another Event</button>
-    <div class="flex justify-between mt-8">
-      <button class="ss-btn ss-btn-outline" onclick="prevStep(3)">← Back</button>
-      <button class="ss-btn ss-btn-primary" onclick="nextStep(3)">Continue →</button>
-    </div>
-  </section>
-
-  <!-- STEP 4 -->
-  <section class="ss-step ss-card p-7 sm:p-10 mb-4 hidden" data-step="4">
-    <p class="ss-chip mb-3">Step 4 of 5</p>
-    <h2 class="font-display text-2xl text-emerald mb-2">Gift Registry</h2>
-    <p class="text-sm text-charcoal/60 mb-6">Add your initial wishlist items, or skip for now.</p>
-    <div id="registry-list" class="space-y-4"></div>
-    <button type="button" class="ss-btn ss-btn-outline-gold text-sm mt-4" onclick="addRegistryItem()">+ Add Gift Item</button>
-    <div class="flex justify-between mt-8">
-      <button class="ss-btn ss-btn-outline" onclick="prevStep(4)">← Back</button>
-      <button class="ss-btn ss-btn-primary" onclick="nextStep(4)">Continue →</button>
-    </div>
-  </section>
-
-  <!-- STEP 5 -->
-  <section class="ss-step ss-card p-7 sm:p-10 mb-4 hidden" data-step="5">
-    <p class="ss-chip mb-3">Step 5 of 5</p>
-    <h2 class="font-display text-2xl text-emerald mb-6">Preview & Create</h2>
-    <div id="preview-box" class="space-y-3 text-sm"></div>
-    <div class="flex justify-between mt-8">
-      <button class="ss-btn ss-btn-outline" onclick="prevStep(5)">← Back</button>
-      <button class="ss-btn ss-btn-gold" id="create-btn" onclick="createWedding()"># Create My Wedding</button>
-    </div>
-  </section>
-
-  <!-- SUCCESS -->
-  <section class="ss-step ss-card p-7 sm:p-10 text-center hidden" data-step="6">
-    <div class="text-4xl mb-4">❤️</div>
-    <h2 class="font-display text-2xl text-emerald mb-2">Your wedding invitation is ready ❤️</h2>
-    <p class="text-charcoal/60 mb-8" id="result-url"></p>
-    <div class="flex flex-col sm:flex-row gap-3 justify-center">
-      <a id="view-link" class="ss-btn ss-btn-primary" href="#">View Invitation</a>
-      <button class="ss-btn ss-btn-outline-gold" onclick="ssShare(window.__resultPublicUrl, 'Our Wedding Invitation')">Share Invitation</button>
-      <a id="dash-link" class="ss-btn ss-btn-gold" href="#">Go to Dashboard</a>
-    </div>
-  </section>
-
-</main>
-
-{% endblock %}
-
-{% block scripts %}
-<script>
-const eventTemplates = {{ event_templates|tojson }};
-const categories = {{ categories|tojson }};
-let state = {events: [], registry: [], theme: 'classic'};
-let currentStep = 1;
-
-function updateDots(){
-  document.querySelectorAll('[data-dot]').forEach(d=>{
-    const n = parseInt(d.dataset.dot);
-    d.classList.remove('active','done');
-    if(n < currentStep) d.classList.add('done');
-    else if(n === currentStep) d.classList.add('active');
-  });
-}
-
-function showStep(n){
-  document.querySelectorAll('.ss-step').forEach(s=> s.classList.add('hidden'));
-  document.querySelector(`.ss-step[data-step="${n}"]`).classList.remove('hidden');
-  currentStep = n;
-  updateDots();
-  window.scrollTo({top:0, behavior:'smooth'});
-}
-
-function nextStep(from){
-  if(from === 1){
-    if(!val('bride_name') || !val('groom_name') || !val('wedding_date')){
-      ssToast('Please fill in bride, groom and wedding date.'); return;
-    }
-  }
-  if(from === 4){ buildPreview(); }
-  showStep(from+1);
-}
-function prevStep(from){ showStep(from-1); }
-
-function val(id){ return document.getElementById(id).value.trim(); }
-function checked(id){ return document.getElementById(id).checked; }
-
-function pickTheme(t){
-  state.theme = t;
-  document.querySelectorAll('.theme-option').forEach(b=> b.classList.remove('ring-2','ring-gold'));
-  document.querySelector(`.theme-option[data-theme="${t}"]`).classList.add('ring-2','ring-gold');
-}
-
-function addEventTemplate(name){
-  const idx = state.events.length;
-  state.events.push({name: name, date:'', time:'', venue:'', dress_code:'', muhurat:'', maps_url:''});
-  renderEvents();
-}
-function removeEvent(idx){ state.events.splice(idx,1); renderEvents(); }
-
-function renderEvents(){
-  const wrap = document.getElementById('events-list');
-  wrap.innerHTML = state.events.map((ev, i) => `
-    <div class="border border-gold/30 rounded-xl p-4">
-      <div class="flex justify-between items-center mb-3">
-        <input class="ss-input font-semibold" style="max-width:60%" value="${escAttr(ev.name)}" oninput="state.events[${i}].name=this.value" placeholder="Event Name">
-        <button type="button" class="text-crimson text-xs font-semibold" onclick="removeEvent(${i})">Delete</button>
-      </div>
-      <div class="grid sm:grid-cols-2 gap-3">
-        <input type="date" class="ss-input" value="${escAttr(ev.date)}" oninput="state.events[${i}].date=this.value">
-        <input type="time" class="ss-input" value="${escAttr(ev.time)}" oninput="state.events[${i}].time=this.value">
-        <input class="ss-input" placeholder="Venue" value="${escAttr(ev.venue)}" oninput="state.events[${i}].venue=this.value">
-        <input class="ss-input" placeholder="Dress Code" value="${escAttr(ev.dress_code)}" oninput="state.events[${i}].dress_code=this.value">
-        <input class="ss-input" placeholder="Muhurat" value="${escAttr(ev.muhurat)}" oninput="state.events[${i}].muhurat=this.value">
-        <input class="ss-input" placeholder="Google Maps Link" value="${escAttr(ev.maps_url)}" oninput="state.events[${i}].maps_url=this.value">
-      </div>
-    </div>
-  `).join('') || '<p class="text-sm text-charcoal/50">No events added yet — use a template above.</p>';
-}
-
-function addRegistryItem(){
-  state.registry.push({title:'', target_amount:'', category: categories[0], gift_type:'Exclusive Gift'});
-  renderRegistry();
-}
-function removeRegistry(idx){ state.registry.splice(idx,1); renderRegistry(); }
-
-function renderRegistry(){
-  const wrap = document.getElementById('registry-list');
-  wrap.innerHTML = state.registry.map((it,i)=> `
-    <div class="border border-gold/30 rounded-xl p-4">
-      <div class="flex justify-between items-center mb-3">
-        <input class="ss-input font-semibold" style="max-width:60%" placeholder="Item Name" value="${escAttr(it.title)}" oninput="state.registry[${i}].title=this.value">
-        <button type="button" class="text-crimson text-xs font-semibold" onclick="removeRegistry(${i})">Delete</button>
-      </div>
-      <div class="grid sm:grid-cols-3 gap-3">
-        <input type="number" class="ss-input" placeholder="Target Amount ₹" value="${escAttr(it.target_amount)}" oninput="state.registry[${i}].target_amount=this.value">
-        <select class="ss-select" onchange="state.registry[${i}].category=this.value">
-          ${categories.map(c=>`<option ${c===it.category?'selected':''}>${c}</option>`).join('')}
-        </select>
-        <select class="ss-select" onchange="state.registry[${i}].gift_type=this.value">
-          <option ${it.gift_type==='Exclusive Gift'?'selected':''}>Exclusive Gift</option>
-          <option ${it.gift_type==='Group Gift'?'selected':''}>Group Gift</option>
-        </select>
-      </div>
-    </div>
-  `).join('') || '<p class="text-sm text-charcoal/50">No gifts yet — you can skip this step.</p>';
-}
-
-function escAttr(s){ return (s||'').toString().replace(/"/g,'&quot;'); }
-
-function buildPreview(){
-  const box = document.getElementById('preview-box');
-  box.innerHTML = `
-    <div class="ss-divider"></div>
-    <p><span class="ss-label inline">Couple:</span> ${val('bride_name')} & ${val('groom_name')}</p>
-    <p><span class="ss-label inline">Wedding Date:</span> ${val('wedding_date')}</p>
-    <p><span class="ss-label inline">Venue:</span> ${val('venue') || '—'}, ${val('city') || '—'}</p>
-    <p><span class="ss-label inline">Events:</span> ${state.events.map(e=>e.name).filter(Boolean).join(', ') || 'None added'}</p>
-    <p><span class="ss-label inline">Shagun:</span> ${checked('enable_shagun') ? 'Enabled' : 'Disabled'}</p>
-    <p><span class="ss-label inline">Gift Registry:</span> ${state.registry.length} item(s)</p>
-  `;
-}
-
-async function createWedding(){
-  const btn = document.getElementById('create-btn');
-  btn.disabled = true; btn.textContent = 'Creating...';
-  const payload = {
-    couple: {
-      bride_name: val('bride_name'), groom_name: val('groom_name'),
-      bride_family: val('bride_family'), groom_family: val('groom_family'),
-      wedding_date: val('wedding_date'), venue: val('venue'), city: val('city'),
-      description: val('description'), cover_image: val('cover_image'),
-    },
-    settings: {
-      invitation_title: val('invitation_title') || `${val('bride_name')} & ${val('groom_name')}`,
-      invocation: val('invocation'),
-      upi_id: val('upi_id'), upi_name: val('upi_name'),
-      whatsapp_contact: val('whatsapp_contact'),
-      enable_shagun: checked('enable_shagun'), enable_token: checked('enable_token'),
-      theme: state.theme,
-    },
-    events: state.events,
-    registry: state.registry,
-  };
-  try{
-    const res = await fetch('/api/weddings', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload)});
-    const data = await res.json();
-    if(!res.ok){ throw new Error(data.detail || 'Something went wrong'); }
-    window.__resultPublicUrl = window.location.origin + data.public_url;
-    document.getElementById('result-url').textContent = window.__resultPublicUrl;
-    document.getElementById('view-link').href = data.public_url;
-    document.getElementById('dash-link').href = data.admin_url;
-    showStep(6);
-  }catch(e){
-    ssToast(e.message);
-    btn.disabled = false; btn.textContent = '# Create My Wedding';
-  }
-}
-
-pickTheme('classic');
-updateDots();
-</script>
+</div>
 {% endblock %}
