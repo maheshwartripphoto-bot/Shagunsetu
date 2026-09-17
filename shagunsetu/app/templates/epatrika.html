@@ -1,369 +1,90 @@
 {% extends "base.html" %}
-{% block title %}{{ wedding.invitation_title or (wedding.bride_name ~ ' & ' ~ wedding.groom_name) }} — ShagunSetu{% endblock %}
+
+{% block title %}{{ event.groom_name }} & {{ event.bride_name }} - E-Patrika{% endblock %}
+
 {% block content %}
+<div style="max-width: 900px; margin: 1.5rem auto; padding: 0 1rem;">
+  <div class="mandap-frame">
+    <div class="mandap-pillar-left"></div>
+    <div class="mandap-pillar-right"></div>
 
-<!-- HERO -->
-<header class="relative hero-gradient text-ivory text-center px-5 py-20 overflow-hidden">
-  <div class="relative z-10 ss-fade-in">
-    <p class="font-display tracking-[0.3em] text-gold text-xs sm:text-sm mb-6">{{ wedding.invocation }}</p>
-    {% if wedding.cover_image %}
-    <img src="{{ wedding.cover_image }}" class="w-28 h-28 rounded-full object-cover mx-auto mb-6 border-4 border-gold">
-    {% endif %}
-    <p class="uppercase tracking-[0.35em] text-xs text-ivory/70 mb-4">Together with their families</p>
-    <h1 class="font-display text-4xl sm:text-6xl mb-3">{{ wedding.bride_name }}<br><span class="text-gold text-2xl sm:text-3xl">&</span><br>{{ wedding.groom_name }}</h1>
-    <p class="text-ivory/80 mt-6">are getting married</p>
-    <p class="font-display text-xl text-gold mt-2">{{ wedding.wedding_date }}</p>
-    {% if wedding.venue or wedding.city %}<p class="text-ivory/70 text-sm mt-1">{{ wedding.venue }}{% if wedding.city %}, {{ wedding.city }}{% endif %}</p>{% endif %}
-  </div>
-  <div class="absolute inset-0 ss-mandala-bg"></div>
-</header>
+    <div class="text-center">
+      <div class="mandap-arch"></div>
+      <div class="auspicious-symbol">卐 || ॐ श्री गणेशाय नमः || 卐</div>
+      <h1 class="wedding-title" style="font-size: 2.2rem; margin-bottom: 0.2rem;">विवाह पत्रिका</h1>
+      <p style="font-style: italic; color: var(--text-muted); margin-bottom: 1.5rem;">Two Souls, Seven Vows, One Eternal Journey</p>
 
-<!-- COUNTDOWN -->
-<section class="max-w-2xl mx-auto px-5 -mt-8 relative z-20">
-  <div class="ss-card p-6 grid grid-cols-4 gap-2 text-center" id="countdown">
-    <div><div class="font-display text-2xl sm:text-3xl text-emerald" id="cd-days">--</div><div class="text-[10px] uppercase text-charcoal/50 tracking-wider">Days</div></div>
-    <div><div class="font-display text-2xl sm:text-3xl text-emerald" id="cd-hours">--</div><div class="text-[10px] uppercase text-charcoal/50 tracking-wider">Hours</div></div>
-    <div><div class="font-display text-2xl sm:text-3xl text-emerald" id="cd-mins">--</div><div class="text-[10px] uppercase text-charcoal/50 tracking-wider">Minutes</div></div>
-    <div><div class="font-display text-2xl sm:text-3xl text-emerald" id="cd-secs">--</div><div class="text-[10px] uppercase text-charcoal/50 tracking-wider">Seconds</div></div>
-  </div>
-  <p id="cd-done" class="text-center font-display text-emerald mt-3 hidden">The celebration has begun ❤️</p>
-</section>
-
-{% if wedding.description %}
-<!-- STORY -->
-<section class="max-w-2xl mx-auto px-5 py-16 text-center">
-  <p class="ss-chip mb-4">Our Story</p>
-  <p class="text-charcoal/75 leading-relaxed">{{ wedding.description }}</p>
-</section>
-{% endif %}
-
-<!-- EVENTS -->
-{% if events %}
-<section class="max-w-4xl mx-auto px-5 py-12">
-  <h2 class="font-display text-3xl text-emerald text-center mb-10">Wedding Events</h2>
-  <div class="grid sm:grid-cols-2 gap-6">
-    {% for ev in events %}
-    <div class="ss-card p-6">
-      <h3 class="font-display text-xl text-crimson mb-3">{{ ev.name }}</h3>
-      <div class="space-y-1 text-sm text-charcoal/70">
-        {% if ev.date %}<p>📅 {{ ev.date }}{% if ev.time %} · {{ ev.time }}{% endif %}</p>{% endif %}
-        {% if ev.venue %}<p>📍 {{ ev.venue }}</p>{% endif %}
-        {% if ev.dress_code %}<p>👗 {{ ev.dress_code }}</p>{% endif %}
-        {% if ev.muhurat %}<p>🕉️ Muhurat: {{ ev.muhurat }}</p>{% endif %}
-      </div>
-      {% if ev.maps_url %}<a href="{{ ev.maps_url }}" target="_blank" class="ss-btn ss-btn-outline text-xs mt-4">Get Directions</a>{% endif %}
-    </div>
-    {% endfor %}
-  </div>
-</section>
-{% endif %}
-
-<!-- RSVP -->
-<section class="max-w-xl mx-auto px-5 py-16" id="rsvp">
-  <h2 class="font-display text-3xl text-emerald text-center mb-2">RSVP</h2>
-  <p class="text-center text-charcoal/60 text-sm mb-8">Let us know if you'll be celebrating with us</p>
-  <form id="rsvp-form" class="ss-card p-7 space-y-4">
-    <div><label class="ss-label">Name</label><input required class="ss-input" id="rsvp-name"></div>
-    <div><label class="ss-label">WhatsApp Number</label><input required class="ss-input" id="rsvp-phone"></div>
-    <div>
-      <label class="ss-label">Will you be joining us?</label>
-      <div class="flex gap-3">
-        <button type="button" class="ss-btn ss-btn-outline flex-1 rsvp-attend-btn" data-val="true" onclick="setAttending(true)">❤️ Happily Attending</button>
-        <button type="button" class="ss-btn ss-btn-outline flex-1 rsvp-attend-btn" data-val="false" onclick="setAttending(false)">Regretfully Declining</button>
+      <div class="couple-names">
+        {{ event.groom_name }} &amp; {{ event.bride_name }}
       </div>
     </div>
-    <div class="grid grid-cols-2 gap-3">
-      <div><label class="ss-label">Adults</label><input type="number" min="0" value="1" class="ss-input" id="rsvp-adults"></div>
-      <div><label class="ss-label">Children</label><input type="number" min="0" value="0" class="ss-input" id="rsvp-children"></div>
-    </div>
-    {% if events %}
-    <div>
-      <label class="ss-label">Events Attending</label>
-      <div class="flex flex-wrap gap-2">
-        {% for ev in events %}
-        <label class="ss-chip cursor-pointer"><input type="checkbox" class="mr-1 rsvp-event-cb" value="{{ ev.id }}">{{ ev.name }}</label>
-        {% endfor %}
-      </div>
-    </div>
-    {% endif %}
-    <div>
-      <label class="ss-label">Dietary Preference</label>
-      <select class="ss-select" id="rsvp-diet">
-        <option>Pure Vegetarian</option><option>Jain Vegetarian</option><option>Non-Vegetarian</option>
-      </select>
-    </div>
-    <div><label class="ss-label">Message (optional)</label><textarea class="ss-textarea" id="rsvp-message" rows="2"></textarea></div>
-    <button type="submit" class="ss-btn ss-btn-primary w-full">Submit RSVP</button>
-  </form>
-</section>
 
-{% if wedding.enable_shagun %}
-<!-- SHAGUN -->
-<section class="max-w-xl mx-auto px-5 py-16" id="shagun">
-  <h2 class="font-display text-3xl text-emerald text-center mb-1">ShagunSetu</h2>
-  <p class="text-center text-charcoal/60 text-sm mb-8">Bless the couple with your Shagun ❤️</p>
-  <div class="ss-card p-7">
-    <div class="grid grid-cols-2 gap-3 mb-4">
-      {% for amt in preset_amounts %}
-      <button type="button" class="ss-btn ss-btn-outline shagun-amt-btn" data-amt="{{ amt }}" onclick="pickShagunAmount({{ amt }})">₹{{ '{:,}'.format(amt) }}</button>
-      {% endfor %}
+    <!-- Family Honor Section -->
+    <div style="background: rgba(243, 112, 33, 0.05); border-radius: 12px; padding: 1.5rem; border: 1px solid var(--wedding-gold); margin: 2rem 0; text-align: center;">
+      <h4 style="color: var(--mandap-crimson); margin-bottom: 0.4rem;">Blessings From Families</h4>
+      <p style="margin: 0; font-size: 1.15rem;">
+        {% if event.host_family %}
+          Cordially hosted by: <strong>{{ event.host_family }}</strong>
+        {% else %}
+          With best compliments from all relatives and friends
+        {% endif %}
+      </p>
     </div>
-    <label class="ss-label">Custom Amount</label>
-    <input type="number" class="ss-input mb-4" id="shagun-custom" placeholder="Enter amount" oninput="pickShagunAmount(this.value, true)">
-    {% if wedding.enable_token %}
-    <label class="flex items-center gap-2 text-sm mb-4"><input type="checkbox" id="shagun-token" checked class="w-4 h-4"> Include ₹1 Auspicious Token</label>
-    {% endif %}
-    <div class="ss-divider"></div>
-    <input class="ss-input mb-3" id="shagun-name" placeholder="Your Name">
-    <textarea class="ss-textarea mb-4" id="shagun-message" rows="2" placeholder="A short blessing (optional)"></textarea>
-    <div class="text-center mb-4 text-sm text-charcoal/70" id="shagun-total-display">Select an amount to continue</div>
-    <button class="ss-btn ss-btn-gold w-full" onclick="submitShagun()">Pay via UPI</button>
-  </div>
-</section>
-{% endif %}
 
-{% if registry %}
-<!-- REGISTRY -->
-<section class="max-w-4xl mx-auto px-5 py-16" id="registry">
-  <h2 class="font-display text-3xl text-emerald text-center mb-1"># Our Gift Registry 🎁</h2>
-  <p class="text-center text-charcoal/60 text-sm mb-10">A few things that would mean the world to us</p>
-  <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-    {% for item in registry %}
-    <div class="ss-card p-5" id="gift-{{ item.id }}">
-      <p class="ss-chip mb-3">{{ item.category }}</p>
-      <h3 class="font-display text-lg text-emerald mb-1">{{ item.title }}</h3>
-      {% if item.gift_type == 'Group Gift' %}
-        <p class="text-sm text-charcoal/60 mb-3">₹{{ '%.0f'|format(item.raised_amount) }} / ₹{{ '%.0f'|format(item.target_amount) }}</p>
-        <div class="w-full bg-gold/15 rounded-full h-2 mb-4">
-          <div class="bg-gold h-2 rounded-full" style="width:{{ [100, (item.raised_amount / item.target_amount * 100) if item.target_amount else 0] | min }}%"></div>
+    <!-- Wedding Program Timeline -->
+    <div style="margin: 2.5rem 0;">
+      <h3 style="text-align: center; color: var(--mandap-crimson); font-family: 'Cinzel Decorative', serif; margin-bottom: 1.5rem;">
+        🪔 Ceremonial Functions (कार्यक्रम) 🪔
+      </h3>
+
+      <div style="display: flex; flex-direction: column; gap: 1rem;">
+        <!-- Haldi Ceremony -->
+        <div class="ceremony-box" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+          <div>
+            <h4 style="color: var(--marigold-orange);">🌻 Haldi Utsav</h4>
+            <p style="margin: 0;">Auspicious turmeric blessings &amp; celebration</p>
+          </div>
+          <span style="font-weight: 700; color: var(--mandap-maroon); font-size: 1.1rem;">Morning Ceremony</span>
         </div>
-        {% if item.is_claimed %}
-        <p class="text-crimson text-sm font-semibold">Fully Funded ❤️</p>
-        {% else %}
-        <button class="ss-btn ss-btn-outline-gold w-full text-sm" onclick="openGiftModal('{{ item.id }}','Group Gift','{{ item.title }}')">Contribute</button>
-        {% endif %}
-      {% else %}
-        <p class="text-sm text-charcoal/60 mb-4">₹{{ '%.0f'|format(item.target_amount) }}</p>
-        {% if item.is_claimed %}
-        <p class="text-crimson text-sm font-semibold">Claimed ❤️</p>
-        {% else %}
-        <button class="ss-btn ss-btn-outline-gold w-full text-sm" onclick="openGiftModal('{{ item.id }}','Exclusive Gift','{{ item.title }}')">Claim This Gift</button>
-        {% endif %}
-      {% endif %}
+
+        <!-- Sangeet & Mehendi -->
+        <div class="ceremony-box" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+          <div>
+            <h4 style="color: var(--banana-leaf-green);">🌿 Mehendi &amp; Sangeet Sandhya</h4>
+            <p style="margin: 0;">Traditional henna, music &amp; dance</p>
+          </div>
+          <span style="font-weight: 700; color: var(--mandap-maroon); font-size: 1.1rem;">Evening 7:00 PM</span>
+        </div>
+
+        <!-- Mandap Muhurat & Pheras -->
+        <div class="ceremony-box" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; border: 2px solid var(--wedding-gold);">
+          <div>
+            <h4 style="color: var(--mandap-crimson);">🔥 Mandap Muhurat &amp; Saat Pheras</h4>
+            <p style="margin: 0;">The sacred wedding vows around the agni kund</p>
+          </div>
+          <span style="font-weight: 700; color: var(--mandap-maroon); font-size: 1.1rem;">{{ event.event_date }}</span>
+        </div>
+
+        <!-- Reception / Preeti Bhoj -->
+        <div class="ceremony-box" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+          <div>
+            <h4 style="color: var(--marigold-gold);">🍽️ Preeti Bhoj &amp; Reception</h4>
+            <p style="margin: 0;">Grand celebratory dinner &amp; blessings</p>
+          </div>
+          <span style="font-weight: 700; color: var(--mandap-maroon); font-size: 1.1rem;">Post Wedding</span>
+        </div>
+      </div>
     </div>
-    {% endfor %}
-  </div>
-</section>
-{% endif %}
 
-<!-- BLESSINGS -->
-<section class="max-w-3xl mx-auto px-5 py-16" id="blessings">
-  <h2 class="font-display text-3xl text-emerald text-center mb-1"># From Your Loved Ones</h2>
-  <p class="text-center text-charcoal/60 text-sm mb-8">A blessing for the couple ❤️</p>
-  <div class="ss-card p-6 mb-8 flex gap-3 flex-col sm:flex-row">
-    <input class="ss-input sm:w-1/3" id="blessing-name" placeholder="Your Name">
-    <input class="ss-input flex-1" id="blessing-message" placeholder="Leave a blessing...">
-    <button class="ss-btn ss-btn-primary" onclick="submitBlessing()">Send</button>
-  </div>
-  <div class="grid sm:grid-cols-2 gap-4" id="blessings-wall">
-    {% for b in blessings %}
-    <div class="ss-card p-4"><p class="text-sm text-charcoal/80">"{{ b.message }}"</p><p class="text-xs text-gold font-semibold mt-2">— {{ b.name }}</p></div>
-    {% else %}
-    <p class="text-sm text-charcoal/50 sm:col-span-2 text-center">Be the first to leave a blessing.</p>
-    {% endfor %}
-  </div>
-</section>
+    <!-- Venue & Location Details -->
+    <div style="border-top: 1px solid var(--wedding-gold); padding-top: 1.5rem; text-align: center;">
+      <h4 style="color: var(--mandap-crimson);">📍 Wedding Venue</h4>
+      <p style="font-size: 1.2rem; font-weight: 600; margin: 0.3rem 0;">{{ event.venue }}</p>
+      <div style="margin-top: 1.5rem;">
+        <a href="/card/{{ event.id }}" class="btn-wedding-crimson">View Short Card</a>
+      </div>
+    </div>
 
-<!-- SHARE -->
-<section class="hero-gradient text-ivory py-14 text-center">
-  <h2 class="font-display text-2xl mb-6">Share this invitation ❤️</h2>
-  <div class="flex flex-col sm:flex-row gap-3 justify-center px-5">
-    <a class="ss-btn ss-btn-gold" target="_blank" href="https://wa.me/?text={{ ('You\'re warmly invited to celebrate our special day ❤️\n\nView our wedding invitation:\n\n' ~ request.url ~ '\n\nWe can\'t wait to celebrate with you!') | urlencode }}">Share on WhatsApp</a>
-    <button class="ss-btn ss-btn-outline-gold" onclick="ssCopy(window.location.href)">Copy Link</button>
-    <a class="ss-btn ss-btn-outline-gold" href="/w/{{ wedding.slug }}/card">View Share Card</a>
-  </div>
-</section>
-
-<footer class="text-center py-8 text-sm text-charcoal/50">
-  {{ wedding.bride_name }} & {{ wedding.groom_name }} · Made with ❤️ on ShagunSetu
-</footer>
-
-<!-- GIFT MODAL -->
-<div id="gift-modal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-  <div class="ss-card p-7 max-w-sm w-full ss-fade-in">
-    <h3 class="font-display text-lg text-emerald mb-4" id="gift-modal-title">Claim This Gift</h3>
-    <input class="ss-input mb-3" id="gift-guest-name" placeholder="Your Name">
-    <input class="ss-input mb-3" id="gift-guest-contact" placeholder="Phone or Email">
-    <input class="ss-input mb-4 hidden" id="gift-contribution" type="number" placeholder="Contribution Amount ₹">
-    <button class="ss-btn ss-btn-primary w-full" onclick="confirmGift()">Confirm</button>
-    <button class="mt-3 text-sm text-charcoal/50 w-full text-center" onclick="ssCloseModal('gift-modal')">Cancel</button>
   </div>
 </div>
-
-<!-- UPI MODAL -->
-<div id="upi-modal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-  <div class="ss-card p-7 max-w-sm w-full ss-fade-in text-center">
-    <h3 class="font-display text-lg text-emerald mb-3">Complete Your Shagun</h3>
-    <p class="text-sm text-charcoal/60 mb-4">Amount: <span class="font-semibold text-emerald" id="upi-amount-display"></span></p>
-    <img id="upi-qr-img" class="mx-auto mb-4 rounded-lg border border-gold/30" style="width:200px;height:200px;">
-    <a id="upi-pay-link" class="ss-btn ss-btn-gold w-full mb-3 sm:hidden" href="#">Pay via UPI</a>
-    <p class="text-xs text-charcoal/50 mb-3 hidden sm:block">Scan the QR code with any UPI app</p>
-    <button class="ss-btn ss-btn-outline w-full mb-3" onclick="ssCopy('{{ wedding.upi_id }}')">Copy UPI ID</button>
-    <button class="text-sm text-charcoal/50 w-full text-center" onclick="ssCloseModal('upi-modal')">Close</button>
-  </div>
-</div>
-
-{% endblock %}
-
-{% block scripts %}
-<script>
-const weddingSlug = "{{ wedding.slug }}";
-const weddingDate = "{{ wedding.wedding_date }}";
-
-// Countdown
-function tickCountdown(){
-  const target = new Date(weddingDate + "T00:00:00");
-  const now = new Date();
-  const diff = target - now;
-  if(diff <= 0){
-    document.getElementById('countdown').classList.add('hidden');
-    document.getElementById('cd-done').classList.remove('hidden');
-    return;
-  }
-  const d = Math.floor(diff / 86400000);
-  const h = Math.floor((diff % 86400000) / 3600000);
-  const m = Math.floor((diff % 3600000) / 60000);
-  const s = Math.floor((diff % 60000) / 1000);
-  document.getElementById('cd-days').textContent = String(d).padStart(2,'0');
-  document.getElementById('cd-hours').textContent = String(h).padStart(2,'0');
-  document.getElementById('cd-mins').textContent = String(m).padStart(2,'0');
-  document.getElementById('cd-secs').textContent = String(s).padStart(2,'0');
-}
-tickCountdown();
-setInterval(tickCountdown, 1000);
-
-// RSVP
-let attendingVal = true;
-function setAttending(v){
-  attendingVal = v;
-  document.querySelectorAll('.rsvp-attend-btn').forEach(b=>{
-    const isSel = (b.dataset.val === String(v));
-    b.classList.toggle('ss-btn-primary', isSel);
-    b.classList.toggle('ss-btn-outline', !isSel);
-  });
-}
-setAttending(true);
-
-document.getElementById('rsvp-form').addEventListener('submit', async (e)=>{
-  e.preventDefault();
-  const events = Array.from(document.querySelectorAll('.rsvp-event-cb:checked')).map(cb=>cb.value);
-  const payload = {
-    guest_name: document.getElementById('rsvp-name').value,
-    phone: document.getElementById('rsvp-phone').value,
-    attending: attendingVal,
-    adult_count: parseInt(document.getElementById('rsvp-adults').value || '1'),
-    child_count: parseInt(document.getElementById('rsvp-children').value || '0'),
-    events: events,
-    diet: document.getElementById('rsvp-diet').value,
-    message: document.getElementById('rsvp-message').value,
-  };
-  try{
-    const res = await fetch(`/w/${weddingSlug}/rsvp`, {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload)});
-    const data = await res.json();
-    if(!res.ok) throw new Error(data.detail || 'Something went wrong');
-    ssToast('RSVP received — thank you! ❤️');
-    e.target.reset();
-  }catch(err){ ssToast(err.message); }
-});
-
-// Shagun
-let shagunAmount = 0;
-function pickShagunAmount(amt, isCustom=false){
-  shagunAmount = parseFloat(amt) || 0;
-  if(!isCustom) document.getElementById('shagun-custom').value = '';
-  document.querySelectorAll('.shagun-amt-btn').forEach(b=>{
-    const isSel = !isCustom && parseFloat(b.dataset.amt) === shagunAmount;
-    b.classList.toggle('ss-btn-gold', isSel);
-    b.classList.toggle('ss-btn-outline', !isSel);
-  });
-  updateShagunTotal();
-}
-function updateShagunTotal(){
-  const tokenEl = document.getElementById('shagun-token');
-  const token = tokenEl ? tokenEl.checked : false;
-  const total = shagunAmount + (token ? 1 : 0);
-  document.getElementById('shagun-total-display').textContent = shagunAmount > 0 ? `Total: ₹${total.toLocaleString('en-IN')}` : 'Select an amount to continue';
-}
-document.addEventListener('change', (e)=>{ if(e.target.id === 'shagun-token') updateShagunTotal(); });
-
-async function submitShagun(){
-  if(shagunAmount <= 0){ ssToast('Please select or enter an amount.'); return; }
-  const tokenEl = document.getElementById('shagun-token');
-  const payload = {
-    sender_name: document.getElementById('shagun-name').value || 'A well-wisher',
-    amount: shagunAmount,
-    token_included: tokenEl ? tokenEl.checked : false,
-    message: document.getElementById('shagun-message').value,
-  };
-  try{
-    const res = await fetch(`/w/${weddingSlug}/shagun`, {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload)});
-    const data = await res.json();
-    if(!res.ok) throw new Error(data.detail || 'Something went wrong');
-    if(data.upi_link){
-      document.getElementById('upi-amount-display').textContent = `₹${data.amount.toLocaleString('en-IN')}`;
-      document.getElementById('upi-qr-img').src = `/w/${weddingSlug}/upi-qr?amount=${data.amount}`;
-      document.getElementById('upi-pay-link').href = data.upi_link;
-      ssOpenModal('upi-modal');
-    } else {
-      ssToast('Shagun recorded — thank you! ❤️');
-    }
-  }catch(err){ ssToast(err.message); }
-}
-
-// Gift claiming
-let currentGift = {id:null, type:null};
-function openGiftModal(id, type, title){
-  currentGift = {id, type};
-  document.getElementById('gift-modal-title').textContent = type === 'Group Gift' ? `Contribute — ${title}` : `Claim — ${title}`;
-  document.getElementById('gift-contribution').classList.toggle('hidden', type !== 'Group Gift');
-  ssOpenModal('gift-modal');
-}
-async function confirmGift(){
-  const name = document.getElementById('gift-guest-name').value;
-  const contact = document.getElementById('gift-guest-contact').value;
-  if(!name){ ssToast('Please enter your name.'); return; }
-  const payload = {name: `${name}${contact ? ' ('+contact+')' : ''}`};
-  if(currentGift.type === 'Group Gift'){
-    payload.amount = parseFloat(document.getElementById('gift-contribution').value || '0');
-  }
-  try{
-    const res = await fetch(`/w/${weddingSlug}/gift/${currentGift.id}/claim`, {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload)});
-    const data = await res.json();
-    if(!res.ok) throw new Error(data.detail || 'Something went wrong');
-    ssToast('Thank you! ❤️');
-    ssCloseModal('gift-modal');
-    setTimeout(()=> window.location.reload(), 900);
-  }catch(err){ ssToast(err.message); }
-}
-
-// Blessings
-async function submitBlessing(){
-  const name = document.getElementById('blessing-name').value;
-  const message = document.getElementById('blessing-message').value;
-  if(!message.trim()){ ssToast('Please write a blessing first.'); return; }
-  try{
-    const res = await fetch(`/w/${weddingSlug}/blessing`, {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({name, message})});
-    const data = await res.json();
-    if(!res.ok) throw new Error(data.detail || 'Something went wrong');
-    const wall = document.getElementById('blessings-wall');
-    const card = document.createElement('div');
-    card.className = 'ss-card p-4 ss-fade-in';
-    card.innerHTML = `<p class="text-sm text-charcoal/80">"${message}"</p><p class="text-xs text-gold font-semibold mt-2">— ${name || 'A well-wisher'}</p>`;
-    wall.prepend(card);
-    document.getElementById('blessing-name').value = '';
-    document.getElementById('blessing-message').value = '';
-    ssToast('Blessing sent ❤️');
-  }catch(err){ ssToast(err.message); }
-}
-</script>
 {% endblock %}
