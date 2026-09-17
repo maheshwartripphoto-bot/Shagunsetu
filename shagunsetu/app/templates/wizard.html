@@ -1,7 +1,5 @@
 {% extends "base.html" %}
 
-{% block title %}Create Auspicious E-Patrika | ShagunSetu{% endblock %}
-
 {% block content %}
 <div style="max-width: 800px; margin: 2rem auto; padding: 0 1rem;">
   <div class="mandap-frame">
@@ -11,46 +9,57 @@
     <div class="text-center">
       <div class="mandap-arch"></div>
       <div class="auspicious-symbol">🪔 || शुभ लग्न विवरण || 🪔</div>
-      <h2 class="wedding-title">Craft Your Wedding Invitation</h2>
-      <p style="color: var(--text-muted); font-style: italic;">Enter your ceremonial details to generate a royal card</p>
+      <h2 class="wedding-title">Create Wedding Portal &amp; Registry</h2>
+      <p style="color: var(--text-muted); font-style: italic;">Fill the details below to generate your E-Patrika, UPI Shagun Desk, and Gift Wishlist</p>
     </div>
 
-    <form method="POST" action="/create" style="display: flex; flex-direction: column; gap: 1.4rem; margin-top: 2rem;">
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem;">
+    <form method="POST" action="/create" style="display: flex; flex-direction: column; gap: 1.2rem; margin-top: 2rem;">
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
         <div>
-          <label style="display: block; font-weight: 600; margin-bottom: 0.4rem; color: var(--mandap-crimson);">Groom's Full Name (वर)</label>
+          <label style="display: block; font-weight: 600; color: var(--mandap-crimson);">Groom's Name (वर)</label>
           <input type="text" name="groom_name" placeholder="e.g. Rahul Sharma" required style="width: 100%;">
         </div>
         <div>
-          <label style="display: block; font-weight: 600; margin-bottom: 0.4rem; color: var(--mandap-crimson);">Bride's Full Name (वधू)</label>
+          <label style="display: block; font-weight: 600; color: var(--mandap-crimson);">Bride's Name (वधू)</label>
           <input type="text" name="bride_name" placeholder="e.g. Priya Patel" required style="width: 100%;">
         </div>
       </div>
 
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem;">
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
         <div>
-          <label style="display: block; font-weight: 600; margin-bottom: 0.4rem; color: var(--mandap-crimson);">Wedding Date (विवाह तिथि)</label>
-          <input type="date" name="event_date" required style="width: 100%;">
+          <label style="display: block; font-weight: 600; color: var(--mandap-crimson);">Main Wedding Date</label>
+          <input type="date" name="wedding_date" required style="width: 100%;">
         </div>
         <div>
-          <label style="display: block; font-weight: 600; margin-bottom: 0.4rem; color: var(--mandap-crimson);">Auspicious Muhurat Time (शुभ मुहूर्त)</label>
-          <input type="text" name="muhurat_time" placeholder="e.g. 07:15 PM Godhuli Bela" style="width: 100%;">
+          <label style="display: block; font-weight: 600; color: var(--mandap-crimson);">Main Venue / City</label>
+          <input type="text" name="venue" placeholder="e.g. Rajwada Palace, Indore" required style="width: 100%;">
         </div>
       </div>
 
       <div>
-        <label style="display: block; font-weight: 600; margin-bottom: 0.4rem; color: var(--mandap-crimson);">Wedding Venue (स्थान)</label>
-        <input type="text" name="venue" placeholder="e.g. Rajwada Palace, Indore" required style="width: 100%;">
+        <label style="display: block; font-weight: 600; color: var(--mandap-crimson);">Host Family Line</label>
+        <input type="text" name="host_family" placeholder="e.g. Smt. & Shri Sharma cordially invite you..." style="width: 100%;">
       </div>
 
-      <div>
-        <label style="display: block; font-weight: 600; margin-bottom: 0.4rem; color: var(--mandap-crimson);">Host Families &amp; Blessings Line</label>
-        <textarea name="host_family" rows="3" placeholder="e.g. With best compliments from Sharma & Patel Family..." style="width: 100%;"></textarea>
+      <!-- UPI Shagun Configuration -->
+      <div style="border-top: 2px dashed var(--wedding-gold); padding-top: 1.2rem; margin-top: 0.5rem;">
+        <h4 style="color: var(--mandap-crimson); margin-bottom: 0.4rem;">🪙 Digital Shagun Configuration (Direct Bank Transfer)</h4>
+        <p style="font-size: 0.95rem; color: var(--text-muted); margin-bottom: 1rem;">Your UPI ID for guests to send cash envelopes directly through GPay, PhonePe, or Paytm.</p>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+          <div>
+            <label style="display: block; font-weight: 600;">Receiving UPI ID (VPA)</label>
+            <input type="text" name="upi_id" placeholder="e.g. couple@okicici" required style="width: 100%;">
+          </div>
+          <div>
+            <label style="display: block; font-weight: 600;">Payee Account Name</label>
+            <input type="text" name="upi_payee_name" placeholder="e.g. Rahul and Priya" required style="width: 100%;">
+          </div>
+        </div>
       </div>
 
       <div class="text-center" style="margin-top: 1rem;">
         <button type="submit" class="btn-wedding-gold" style="width: 100%; max-width: 320px;">
-          Generate E-Patrika ✨
+          Generate Wedding Portal ✨
         </button>
       </div>
     </form>
