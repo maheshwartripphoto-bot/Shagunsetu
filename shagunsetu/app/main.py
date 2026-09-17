@@ -16,7 +16,7 @@ models.Base.metadata.create_all(bind=database.engine)
 app.mount("/static", StaticFiles(directory=str(BASE_DIR / "static")), name="static")
 templates = Jinja2Templates(directory=str(BASE_DIR / "templates"))
 
-# --- Template Views ---
+# --- Page Routes ---
 
 @app.get("/", response_class=HTMLResponse)
 def landing_view(request: Request):
@@ -71,37 +71,17 @@ def create_event(
     db.commit()
     db.refresh(event)
 
-    # Seed core traditional ceremonies
-    ceremonies = [
-        models.Ceremony(
-            event_id=event.id,
-            name="Haldi & Mehendi Rasam",
-            date=wedding_date,
-            time="10:00 AM",
-            venue_name=venue,
-            maps_url=f"https://www.google.com/maps/search/?api=1&query={venue.replace(' ', '+')}",
-            dress_code="Shades of Yellow & Floral Prints"
-        ),
-        models.Ceremony(
-            event_id=event.id,
-            name="Sangeet Sandhya",
-            date=wedding_date,
-            time="07:00 PM",
-            venue_name=venue,
-            maps_url=f"https://www.google.com/maps/search/?api=1&query={venue.replace(' ', '+')}",
-            dress_code="Indo-Western / Evening Glam"
-        ),
-        models.Ceremony(
-            event_id=event.id,
-            name="Mandap Muhurat & Saat Pheras",
-            date=wedding_date,
-            time="11:00 PM",
-            venue_name=venue,
-            maps_url=f"https://www.google.com/maps/search/?api=1&query={venue.replace(' ', '+')}",
-            dress_code="Traditional Ethnic Silks"
-        )
-    ]
-    db.add_all(ceremonies)
+    # Seed default main ceremony
+    main_ceremony = models.Ceremony(
+        event_id=event.id,
+        name="Mandap Muhurat & Saat Pheras",
+        date=wedding_date,
+        time="11:00 PM",
+        venue_name=venue,
+        maps_url=f"https://www.google.com/maps/search/?api=1&query={venue.replace(' ', '+')}",
+        dress_code="Traditional Ethnic Silks"
+    )
+    db.add(main_ceremony)
 
     # Starter registry items
     default_items = [
@@ -113,6 +93,50 @@ def create_event(
     db.commit()
 
     return RedirectResponse(url=f"/epatrika/{event.id}", status_code=303)
+
+# --- Multi-Day Ceremony Management ---
+
+@app.post("/ceremony/add/{event_id}")
+def add_ceremony(
+    event_id: int,
+    name: str = Form(...),
+    date: str = Form(...),
+    time: str = Form(...),
+    venue_name: str = Form(...),
+    maps_url: str = Form(None),
+    dress_code: str = Form(None),
+    db: Session = Depends(database.get_db)
+):
+    event = db.query(models.Event).filter(models.Event.id == event_id).first()
+    if not event:
+        raise HTTPException(status_code=404, detail="Wedding event not found")
+
+    new_ceremony = models.Ceremony(
+        event_id=event.id,
+        name=name.strip(),
+        date=str(date),
+        time=time.strip(),
+        venue_name=venue_name.strip(),
+        maps_url=maps_url.strip() if maps_url else None,
+        dress_code=dress_code.strip() if dress_code else None
+    )
+    db.add(new_ceremony)
+    db.commit()
+    return RedirectResponse(url=f"/epatrika/{event_id}#ceremonies-section", status_code=303)
+
+@app.post("/ceremony/delete/{ceremony_id}")
+def delete_ceremony(
+    ceremony_id: int,
+    db: Session = Depends(database.get_db)
+):
+    ceremony = db.query(models.Ceremony).filter(models.Ceremony.id == ceremony_id).first()
+    if not ceremony:
+        raise HTTPException(status_code=404, detail="Ceremony not found")
+    
+    event_id = ceremony.event_id
+    db.delete(ceremony)
+    db.commit()
+    return RedirectResponse(url=f"/epatrika/{event_id}#ceremonies-section", status_code=303)
 
 # --- RSVP & Shagun Handlers ---
 
@@ -156,7 +180,7 @@ def post_shagun(
     db.commit()
     return RedirectResponse(url=f"/epatrika/{event_id}?shagun_sent=1", status_code=303)
 
-# --- Registry & Wishlist Handlers ---
+# --- Wishlist & Registry Handlers ---
 
 @app.post("/registry/add/{event_id}")
 def add_registry_item(
@@ -207,7 +231,7 @@ def delete_registry_item(
 ):
     item = db.query(models.RegistryItem).filter(models.RegistryItem.id == item_id).first()
     if not item:
-        raise HTTPException(status_code=404, detail="Registry item not found")
+        raise HTTPException(status_code=404, detail="Item not found")
     
     db.delete(item)
     db.commit()
