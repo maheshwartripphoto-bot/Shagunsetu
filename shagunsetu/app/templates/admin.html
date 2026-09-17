@@ -1,29 +1,28 @@
 {% extends "base.html" %}
 
-{% block title %}Admin Dashboard | ShagunSetu{% endblock %}
-
 {% block content %}
 <div style="max-width: 1050px; margin: 2rem auto; padding: 0 1rem;">
   <div class="mandap-frame" style="max-width: 100%;">
     <div class="mandap-pillar-left"></div>
     <div class="mandap-pillar-right"></div>
 
-    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; margin-bottom: 2rem; border-bottom: 2px solid var(--wedding-gold); padding-bottom: 1rem;">
+    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 2rem; border-bottom: 2px solid var(--wedding-gold); padding-bottom: 1rem;">
       <div>
-        <div class="auspicious-symbol" style="font-size: 1.5rem;">卐 || व्यवस्थापक पटल || 卐</div>
-        <h2 class="wedding-title" style="margin: 0;">Event Management Dashboard</h2>
+        <div class="auspicious-symbol" style="font-size: 1.4rem;">卐 || व्यवस्थापक पटल || 卐</div>
+        <h2 class="wedding-title" style="margin: 0;">Host Wedding Command Center</h2>
       </div>
-      <a href="/wizard" class="btn-wedding-gold" style="padding: 0.5rem 1.4rem; font-size: 0.85rem;">+ Create New Event</a>
+      <a href="/wizard" class="btn-wedding-gold" style="padding: 0.5rem 1.4rem; font-size: 0.85rem;">+ Create New Wedding</a>
     </div>
 
     <!-- Events Table -->
     <div style="overflow-x: auto;">
-      <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 1.05rem;">
+      <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 1rem;">
         <thead>
           <tr style="background: var(--banana-leaf-tint); border-bottom: 2px solid var(--wedding-gold); color: var(--mandap-crimson); font-family: 'Cinzel Decorative', serif;">
             <th style="padding: 1rem;">Couple</th>
-            <th style="padding: 1rem;">Wedding Date</th>
-            <th style="padding: 1rem;">Venue</th>
+            <th style="padding: 1rem;">Date</th>
+            <th style="padding: 1rem;">RSVP Status</th>
+            <th style="padding: 1rem;">Digital Shagun Collected</th>
             <th style="padding: 1rem;">Links</th>
           </tr>
         </thead>
@@ -31,21 +30,40 @@
           {% if events %}
             {% for ev in events %}
             <tr style="border-bottom: 1px solid rgba(197, 160, 89, 0.3);">
-              <td style="padding: 1rem; font-weight: 700; color: var(--mandap-crimson);">
+              <td style="padding: 1rem; font-weight: bold; color: var(--mandap-crimson);">
                 {{ ev.groom_name }} &amp; {{ ev.bride_name }}
               </td>
-              <td style="padding: 1rem;">{{ ev.event_date }}</td>
-              <td style="padding: 1rem;">{{ ev.venue }}</td>
-              <td style="padding: 1rem; display: flex; gap: 0.5rem;">
-                <a href="/card/{{ ev.id }}" class="btn-wedding-crimson" style="padding: 0.3rem 0.8rem; font-size: 0.8rem;">Card</a>
-                <a href="/epatrika/{{ ev.id }}" class="btn-wedding-gold" style="padding: 0.3rem 0.8rem; font-size: 0.8rem;">E-Patrika</a>
+              <td style="padding: 1rem;">{{ ev.wedding_date }}</td>
+              <td style="padding: 1rem;">
+                <span style="color: var(--banana-leaf-green); font-weight: bold;">
+                  {{ ev.rsvps|selectattr('attending', 'equalto', 'Yes')|list|length }} Attending
+                </span>
+                <br>
+                <small style="color: var(--text-muted);">{{ ev.rsvps|sum(attribute='guest_count') }} Guests</small>
+              </td>
+              <td style="padding: 1rem;">
+                <span style="color: var(--marigold-orange); font-weight: bold; font-size: 1.1rem;">
+                  ₹{{ "%.0f"|format(ev.shagun_transactions|sum(attribute='amount')) }}
+                </span>
+                <br>
+                <small style="color: var(--text-muted);">{{ ev.shagun_transactions|length }} Blessings logged</small>
+              </td>
+              <td style="padding: 1rem;">
+                <div style="display: flex; gap: 0.4rem; flex-wrap: wrap;">
+                  <a href="/card/{{ ev.id }}" class="btn-wedding-crimson" style="padding: 0.3rem 0.6rem; font-size: 0.8rem;">Card</a>
+                  <a href="/epatrika/{{ ev.id }}" class="btn-wedding-gold" style="padding: 0.3rem 0.6rem; font-size: 0.8rem;">E-Patrika</a>
+                  <button type="button" class="btn-wedding-crimson" style="padding: 0.3rem 0.6rem; font-size: 0.8rem;"
+                    onclick="shareOnWhatsApp('{{ ev.groom_name }} & {{ ev.bride_name }}', window.location.origin + '/epatrika/{{ ev.id }}')">
+                    WhatsApp
+                  </button>
+                </div>
               </td>
             </tr>
             {% endfor %}
           {% else %}
             <tr>
-              <td colspan="4" style="text-align: center; padding: 2.5rem; color: var(--text-muted);">
-                No wedding events recorded yet. Click <strong>"+ Create New Event"</strong> to design your first e-patrika.
+              <td colspan="5" style="text-align: center; padding: 2.5rem; color: var(--text-muted);">
+                No wedding events recorded. Click <strong>"+ Create New Wedding"</strong> to initialize the registry.
               </td>
             </tr>
           {% endif %}
