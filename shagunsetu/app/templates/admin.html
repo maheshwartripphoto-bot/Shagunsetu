@@ -1,0 +1,203 @@
+{% extends "base.html" %}
+{% block title %}Dashboard — {{ wedding.bride_name }} & {{ wedding.groom_name }}{% endblock %}
+{% block content %}
+
+<nav class="max-w-6xl mx-auto px-5 py-6 flex items-center justify-between">
+  <a href="/" class="font-display text-xl text-emerald font-semibold">Shagun<span class="text-gold">Setu</span></a>
+  <div class="flex gap-2">
+    <a href="/w/{{ wedding.slug }}" target="_blank" class="ss-btn ss-btn-outline text-sm">Preview E-Patrika</a>
+    <button onclick="ssOpenModal('share-modal')" class="ss-btn ss-btn-gold text-sm">Share Invitation</button>
+  </div>
+</nav>
+
+<main class="max-w-6xl mx-auto px-5 pb-24">
+  <div class="ss-card p-6 mb-6">
+    <p class="ss-chip mb-2">Wedding Dashboard</p>
+    <h1 class="font-display text-3xl text-emerald">{{ wedding.bride_name }} & {{ wedding.groom_name }}</h1>
+    <p class="text-charcoal/60 text-sm mt-1">{{ wedding.wedding_date }} · {{ wedding.venue }}{% if wedding.city %}, {{ wedding.city }}{% endif %}</p>
+  </div>
+
+  <!-- OVERVIEW -->
+  <div class="grid grid-cols-2 sm:grid-cols-5 gap-4 mb-8">
+    {% for label, value in [('RSVPs', rsvp_count), ('Attending', attending), ('Expected Guests', expected_guests), ('Registry Items', registry_count), ('Shagun Intents', shagun_count)] %}
+    <div class="ss-card p-5 text-center">
+      <div class="font-display text-2xl text-emerald">{{ value }}</div>
+      <div class="text-xs text-charcoal/60 mt-1">{{ label }}</div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <div class="ss-card p-5 mb-8 flex flex-wrap gap-3">
+    <button onclick="document.getElementById('add-event-form').scrollIntoView({behavior:'smooth'})" class="ss-btn ss-btn-outline text-sm">+ Add Event</button>
+    <button onclick="document.getElementById('add-gift-form').scrollIntoView({behavior:'smooth'})" class="ss-btn ss-btn-outline text-sm">+ Add Gift</button>
+    <button onclick="document.getElementById('rsvp-section').scrollIntoView({behavior:'smooth'})" class="ss-btn ss-btn-outline text-sm">View RSVPs</button>
+    <button onclick="document.getElementById('shagun-section').scrollIntoView({behavior:'smooth'})" class="ss-btn ss-btn-outline text-sm">View Shagun</button>
+    <a href="/w/{{ wedding.slug }}/card" class="ss-btn ss-btn-outline text-sm">Create Share Card</a>
+    <button onclick="ssOpenModal('edit-modal')" class="ss-btn ss-btn-outline text-sm">Edit Wedding</button>
+  </div>
+
+  <!-- EVENTS -->
+  <section class="ss-card p-6 mb-8">
+    <h2 class="font-display text-xl text-emerald mb-4">Events</h2>
+    <div class="space-y-3 mb-6">
+      {% for ev in wedding.events %}
+      <div class="border border-gold/25 rounded-xl p-4 flex justify-between items-center">
+        <div>
+          <p class="font-semibold text-emerald">{{ ev.name }}</p>
+          <p class="text-xs text-charcoal/60">{{ ev.date }} {{ ev.time }} · {{ ev.venue }}</p>
+        </div>
+        <form method="post" action="/admin/{{ wedding.slug }}/events/{{ ev.id }}/delete">
+          <button class="text-crimson text-xs font-semibold">Delete</button>
+        </form>
+      </div>
+      {% else %}
+      <p class="text-sm text-charcoal/50">No events yet.</p>
+      {% endfor %}
+    </div>
+    <form id="add-event-form" method="post" action="/admin/{{ wedding.slug }}/events/add" class="grid sm:grid-cols-2 gap-3 border-t border-gold/20 pt-5">
+      <input class="ss-input" name="name" placeholder="Event Name" required>
+      <input class="ss-input" type="date" name="date">
+      <input class="ss-input" type="time" name="time">
+      <input class="ss-input" name="venue" placeholder="Venue">
+      <input class="ss-input" name="dress_code" placeholder="Dress Code">
+      <input class="ss-input" name="muhurat" placeholder="Muhurat">
+      <input class="ss-input sm:col-span-2" name="maps_url" placeholder="Google Maps Link">
+      <button class="ss-btn ss-btn-primary sm:col-span-2 justify-self-start">+ Add Another Event</button>
+    </form>
+  </section>
+
+  <!-- REGISTRY -->
+  <section class="ss-card p-6 mb-8">
+    <h2 class="font-display text-xl text-emerald mb-4">Gift Registry</h2>
+    <div class="grid sm:grid-cols-2 gap-3 mb-6">
+      {% for item in wedding.wishlist_items %}
+      <div class="border border-gold/25 rounded-xl p-4 flex justify-between items-center">
+        <div>
+          <p class="font-semibold text-emerald">{{ item.title }}</p>
+          <p class="text-xs text-charcoal/60">₹{{ '%.0f'|format(item.target_amount) }} · {{ item.category }} · {{ item.gift_type }}</p>
+          <p class="text-xs mt-1">{% if item.is_claimed %}<span class="text-crimson font-semibold">Claimed ❤️{% if item.claimed_by %} — {{ item.claimed_by }}{% endif %}</span>{% elif item.gift_type == 'Group Gift' %}<span class="text-gold font-semibold">₹{{ '%.0f'|format(item.raised_amount) }} raised</span>{% else %}<span class="text-charcoal/50">Available</span>{% endif %}</p>
+        </div>
+        <form method="post" action="/admin/{{ wedding.slug }}/registry/{{ item.id }}/delete">
+          <button class="text-crimson text-xs font-semibold">Delete</button>
+        </form>
+      </div>
+      {% else %}
+      <p class="text-sm text-charcoal/50">No registry items yet.</p>
+      {% endfor %}
+    </div>
+    <form id="add-gift-form" method="post" action="/admin/{{ wedding.slug }}/registry/add" class="grid sm:grid-cols-2 gap-3 border-t border-gold/20 pt-5">
+      <input class="ss-input" name="title" placeholder="Item Name" required>
+      <input class="ss-input" type="number" name="target_amount" placeholder="Target Amount ₹">
+      <select class="ss-select" name="category">{% for c in categories %}<option>{{ c }}</option>{% endfor %}</select>
+      <select class="ss-select" name="gift_type"><option>Exclusive Gift</option><option>Group Gift</option></select>
+      <button class="ss-btn ss-btn-primary sm:col-span-2 justify-self-start">+ Add Gift</button>
+    </form>
+  </section>
+
+  <!-- RSVPs -->
+  <section id="rsvp-section" class="ss-card p-6 mb-8">
+    <h2 class="font-display text-xl text-emerald mb-4">RSVPs</h2>
+    <div class="ss-scroll-x">
+    <table class="w-full text-sm min-w-[600px]">
+      <thead><tr class="text-left text-charcoal/50 border-b border-gold/20">
+        <th class="py-2 pr-4">Name</th><th class="py-2 pr-4">Phone</th><th class="py-2 pr-4">Status</th><th class="py-2 pr-4">Guests</th><th class="py-2 pr-4">Diet</th><th class="py-2">Message</th>
+      </tr></thead>
+      <tbody>
+        {% for r in rsvps %}
+        <tr class="border-b border-gold/10">
+          <td class="py-2 pr-4">{{ r.guest_name }}</td>
+          <td class="py-2 pr-4">{{ r.phone }}</td>
+          <td class="py-2 pr-4">{% if r.attending %}<span class="text-emerald font-semibold">Attending</span>{% else %}<span class="text-crimson">Declined</span>{% endif %}</td>
+          <td class="py-2 pr-4">{{ r.adult_count }}A / {{ r.child_count }}C</td>
+          <td class="py-2 pr-4">{{ r.diet }}</td>
+          <td class="py-2 text-charcoal/60">{{ r.message }}</td>
+        </tr>
+        {% else %}
+        <tr><td colspan="6" class="py-4 text-charcoal/50">No RSVPs yet.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    </div>
+  </section>
+
+  <!-- SHAGUN -->
+  <section id="shagun-section" class="ss-card p-6 mb-8">
+    <h2 class="font-display text-xl text-emerald mb-2">Digital Shagun</h2>
+    <p class="text-sm text-charcoal/60 mb-4">Total intent received: <span class="font-semibold text-emerald">₹{{ '%.0f'|format(shagun_total) }}</span> across {{ shagun_count }} intent(s). Payments below are recorded as initiated/unverified.</p>
+    <div class="ss-scroll-x">
+    <table class="w-full text-sm min-w-[500px]">
+      <thead><tr class="text-left text-charcoal/50 border-b border-gold/20">
+        <th class="py-2 pr-4">Sender</th><th class="py-2 pr-4">Amount</th><th class="py-2 pr-4">Status</th><th class="py-2">Message</th>
+      </tr></thead>
+      <tbody>
+        {% for s in shaguns %}
+        <tr class="border-b border-gold/10">
+          <td class="py-2 pr-4">{{ s.sender_name }}</td>
+          <td class="py-2 pr-4">₹{{ '%.0f'|format(s.amount) }}</td>
+          <td class="py-2 pr-4"><span class="ss-chip">{{ s.payment_status }}</span></td>
+          <td class="py-2 text-charcoal/60">{{ s.message }}</td>
+        </tr>
+        {% else %}
+        <tr><td colspan="4" class="py-4 text-charcoal/50">No Shagun yet.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    </div>
+  </section>
+
+  <!-- BLESSINGS -->
+  <section class="ss-card p-6 mb-8">
+    <h2 class="font-display text-xl text-emerald mb-4">Blessings</h2>
+    <div class="grid sm:grid-cols-2 gap-3">
+      {% for b in blessings %}
+      <div class="border border-gold/20 rounded-xl p-4">
+        <p class="text-sm text-charcoal/80">"{{ b.message }}"</p>
+        <p class="text-xs text-gold font-semibold mt-2">— {{ b.name }}</p>
+      </div>
+      {% else %}
+      <p class="text-sm text-charcoal/50">No blessings yet.</p>
+      {% endfor %}
+    </div>
+  </section>
+</main>
+
+<!-- SHARE MODAL -->
+<div id="share-modal" class="hidden fixed inset-0 bg-black/50 flex items-end sm:items-center justify-center z-50 p-4">
+  <div class="ss-card p-7 max-w-md w-full ss-fade-in">
+    <h3 class="font-display text-xl text-emerald mb-1">Share Your Wedding ❤️</h3>
+    <p class="text-sm text-charcoal/60 mb-5">Your invitation is ready to share.</p>
+    <div class="ss-input mb-4 truncate" id="invite-link-text">{{ request.base_url }}w/{{ wedding.slug }}</div>
+    <div class="flex flex-col gap-3">
+      <button class="ss-btn ss-btn-primary" onclick="ssCopy(document.getElementById('invite-link-text').textContent)">Copy Link</button>
+      <a class="ss-btn ss-btn-outline" target="_blank" href="https://wa.me/?text={{ ('You\'re warmly invited to celebrate our special day ❤️\n\nView our wedding invitation:\n\n' ~ request.base_url ~ 'w/' ~ wedding.slug ~ '\n\nWe can\'t wait to celebrate with you!') | urlencode }}">Share on WhatsApp</a>
+      <button class="ss-btn ss-btn-outline-gold" onclick="ssShare('{{ request.base_url }}w/{{ wedding.slug }}', 'Our Wedding Invitation')">Share</button>
+    </div>
+    <button class="mt-5 text-sm text-charcoal/50 w-full text-center" onclick="ssCloseModal('share-modal')">Close</button>
+  </div>
+</div>
+
+<!-- EDIT MODAL -->
+<div id="edit-modal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+  <div class="ss-card p-7 max-w-lg w-full ss-fade-in max-h-[85vh] overflow-y-auto">
+    <h3 class="font-display text-xl text-emerald mb-5">Edit Wedding</h3>
+    <form method="post" action="/admin/{{ wedding.slug }}/edit" class="grid sm:grid-cols-2 gap-3">
+      <input class="ss-input" name="bride_name" value="{{ wedding.bride_name }}" placeholder="Bride Name">
+      <input class="ss-input" name="groom_name" value="{{ wedding.groom_name }}" placeholder="Groom Name">
+      <input class="ss-input" name="wedding_date" type="date" value="{{ wedding.wedding_date }}">
+      <input class="ss-input" name="city" value="{{ wedding.city }}" placeholder="City">
+      <input class="ss-input sm:col-span-2" name="venue" value="{{ wedding.venue }}" placeholder="Venue">
+      <textarea class="ss-textarea sm:col-span-2" name="description" placeholder="Description">{{ wedding.description }}</textarea>
+      <input class="ss-input" name="upi_id" value="{{ wedding.upi_id }}" placeholder="UPI ID">
+      <input class="ss-input" name="upi_name" value="{{ wedding.upi_name }}" placeholder="UPI Payee Name">
+      <select class="ss-select sm:col-span-2" name="theme">
+        {% for t in ['classic','royal','minimal','floral'] %}<option value="{{ t }}" {% if wedding.theme==t %}selected{% endif %}>{{ t|capitalize }}</option>{% endfor %}
+      </select>
+      <label class="flex items-center gap-2 text-sm"><input type="checkbox" name="enable_shagun" {% if wedding.enable_shagun %}checked{% endif %}> Enable Shagun</label>
+      <label class="flex items-center gap-2 text-sm"><input type="checkbox" name="enable_token" {% if wedding.enable_token %}checked{% endif %}> Enable ₹1 Token</label>
+      <button class="ss-btn ss-btn-primary sm:col-span-2 mt-3">Save Changes</button>
+    </form>
+    <button class="mt-4 text-sm text-charcoal/50 w-full text-center" onclick="ssCloseModal('edit-modal')">Cancel</button>
+  </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+{% block title %}Share Card — {{ wedding.bride_name }} & {{ wedding.groom_name }}{% endblock %}
+{% block content %}
+
+<nav class="max-w-2xl mx-auto px-5 py-6 flex items-center justify-between">
+  <a href="/admin/{{ wedding.slug }}" class="font-display text-xl text-emerald font-semibold">Shagun<span class="text-gold">Setu</span></a>
+</nav>
+
+<main class="max-w-md mx-auto px-5 pb-16">
+  <h1 class="font-display text-2xl text-emerald text-center mb-2">Create Share Card</h1>
+  <p class="text-center text-sm text-charcoal/60 mb-6">A beautiful save-the-date, ready to download and share.</p>
+
+  <div class="flex justify-center gap-2 mb-6 flex-wrap">
+    {% for l in ['classic','royal','minimal','floral'] %}
+    <a href="/w/{{ wedding.slug }}/card?layout={{ l }}" class="ss-btn {% if layout==l %}ss-btn-primary{% else %}ss-btn-outline{% endif %} text-xs py-2 px-4 capitalize">{{ l }}</a>
+    {% endfor %}
+  </div>
+
+  <div id="card-capture" class="card-layout card-{{ layout }}">
+    <p class="card-invocation">{{ wedding.invocation }}</p>
+    <p class="card-label">Save the Date</p>
+    {% if wedding.cover_image %}<img src="{{ wedding.cover_image }}" class="card-photo">{% endif %}
+    <h2 class="card-names">{{ wedding.bride_name.upper() }}<span class="card-amp">&</span>{{ wedding.groom_name.upper() }}</h2>
+    <p class="card-sub">are getting married</p>
+    <p class="card-date">{{ wedding.wedding_date }}</p>
+    {% if wedding.city %}<p class="card-city">{{ wedding.city.upper() }}</p>{% endif %}
+    <p class="card-tagline">We can't wait to celebrate<br>with you ❤️</p>
+    <img class="card-qr" src="/w/{{ wedding.slug }}/page-qr">
+    <p class="card-scan">Scan to view E-Patrika</p>
+  </div>
+
+  <div class="flex flex-col gap-3 mt-8">
+    <button class="ss-btn ss-btn-gold" onclick="downloadCard()">Download Card</button>
+    <button class="ss-btn ss-btn-outline" onclick="ssShare(window.location.origin + '/w/{{ wedding.slug }}', 'Save the Date')">Share Card</button>
+    <a class="ss-btn ss-btn-outline-gold" target="_blank" href="https://wa.me/?text={{ ('Save the Date! ' ~ wedding.bride_name ~ ' & ' ~ wedding.groom_name ~ ' are getting married on ' ~ wedding.wedding_date ~ '. View the invitation: ' ~ request.url_for('public_epatrika', slug=wedding.slug)) | urlencode }}">Share on WhatsApp</a>
+  </div>
+</main>
+
+<style>
+.card-layout{
+  position:relative;
+  border-radius:1.25rem;
+  padding:3rem 2rem 2.5rem;
+  text-align:center;
+  overflow:hidden;
+  box-shadow:0 20px 50px -15px rgba(18,60,53,.3);
+  background:var(--ivory);
+  border:1px solid rgba(200,164,93,.3);
+}
+.card-layout::before, .card-layout::after{
+  content:'';position:absolute;width:70px;height:70px;border:2px solid var(--gold);opacity:.35;
+}
+.card-layout::before{top:14px;left:14px;border-right:none;border-bottom:none;}
+.card-layout::after{bottom:14px;right:14px;border-left:none;border-top:none;}
+.card-invocation{font-family:'Cinzel',serif;color:var(--gold);letter-spacing:.2em;font-size:.7rem;margin-bottom:1.2rem;}
+.card-label{font-size:.7rem;letter-spacing:.35em;color:var(--crimson);font-weight:600;margin-bottom:1rem;}
+.card-photo{width:90px;height:90px;border-radius:999px;object-fit:cover;margin:0 auto 1rem;border:3px solid var(--gold);}
+.card-names{font-family:'Cinzel',serif;font-size:1.9rem;color:var(--emerald);line-height:1.3;}
+.card-amp{display:block;color:var(--gold);font-size:1.2rem;margin:.2rem 0;}
+.card-sub{color:var(--charcoal);opacity:.7;font-size:.85rem;margin-top:.75rem;}
+.card-date{font-family:'Cinzel',serif;color:var(--crimson);font-size:1.1rem;margin-top:.4rem;}
+.card-city{letter-spacing:.2em;font-size:.75rem;color:var(--emerald);margin-top:.3rem;font-weight:600;}
+.card-tagline{font-size:.8rem;color:var(--charcoal);opacity:.65;margin-top:1.5rem;line-height:1.5;}
+.card-qr{width:70px;height:70px;margin:1.25rem auto 0.3rem;}
+.card-scan{font-size:.65rem;color:var(--charcoal);opacity:.5;}
+
+.card-royal{background:linear-gradient(160deg,var(--emerald),#0b2a25);}
+.card-royal .card-names, .card-royal .card-city{color:var(--gold);}
+.card-royal .card-sub, .card-royal .card-tagline, .card-royal .card-scan{color:var(--ivory);opacity:.75;}
+.card-royal .card-date{color:var(--ivory);}
+.card-royal .card-invocation{color:var(--gold);}
+.card-royal::before, .card-royal::after{border-color:var(--gold);}
+.card-royal .card-qr{filter:brightness(0) invert(1);}
+
+.card-minimal::before, .card-minimal::after{display:none;}
+.card-minimal{border:1px solid #e5ddd0;box-shadow:none;}
+.card-minimal .card-names{font-size:1.6rem;letter-spacing:.05em;}
+
+.card-floral{background:radial-gradient(circle at 15% 15%, rgba(200,164,93,.18), transparent 40%), radial-gradient(circle at 85% 85%, rgba(122,31,43,.12), transparent 40%), var(--ivory);}
+</style>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script>
+async function downloadCard(){
+  try{
+    const node = document.getElementById('card-capture');
+    const canvas = await html2canvas(node, {scale: 3, backgroundColor: null, useCORS: true});
+    const link = document.createElement('a');
+    link.download = 'shagunsetu-save-the-date.png';
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+  }catch(e){
+    ssToast('Could not generate image — try Share Card instead.');
+  }
+}
+</script>
+
+{% endblock %}
