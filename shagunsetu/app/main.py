@@ -16,6 +16,8 @@ models.Base.metadata.create_all(bind=database.engine)
 app.mount("/static", StaticFiles(directory=str(BASE_DIR / "static")), name="static")
 templates = Jinja2Templates(directory=str(BASE_DIR / "templates"))
 
+# --- Template Views ---
+
 @app.get("/", response_class=HTMLResponse)
 def landing_view(request: Request):
     return templates.TemplateResponse("landing.html", {"request": request})
@@ -28,7 +30,7 @@ def wizard_view(request: Request):
 def card_view(request: Request, event_id: int, db: Session = Depends(database.get_db)):
     event = db.query(models.Event).filter(models.Event.id == event_id).first()
     if not event:
-        raise HTTPException(status_code=404, detail="Invitation not found")
+        raise HTTPException(status_code=404, detail="Invitation card not found")
     return templates.TemplateResponse("card.html", {"request": request, "event": event})
 
 @app.get("/epatrika/{event_id}", response_class=HTMLResponse)
@@ -42,6 +44,8 @@ def epatrika_view(request: Request, event_id: int, db: Session = Depends(databas
 def admin_view(request: Request, db: Session = Depends(database.get_db)):
     events = db.query(models.Event).order_by(models.Event.id.desc()).all()
     return templates.TemplateResponse("admin.html", {"request": request, "events": events})
+
+# --- Event Creation ---
 
 @app.post("/create")
 def create_event(
@@ -99,16 +103,18 @@ def create_event(
     ]
     db.add_all(ceremonies)
 
-    # Seed starter registry items
-    items = [
-        models.RegistryItem(event_id=event.id, item_name="Smart Home Kitchen Suite", category="Appliances", target_amount=15000),
+    # Starter registry items
+    default_items = [
+        models.RegistryItem(event_id=event.id, item_name="Smart Kitchen Appliance Suite", category="Appliances", target_amount=15000),
         models.RegistryItem(event_id=event.id, item_name="Honeymoon Flight Fund", category="Travel", target_amount=25000),
         models.RegistryItem(event_id=event.id, item_name="Living Room Brass Decor", category="Home", target_amount=8000)
     ]
-    db.add_all(items)
+    db.add_all(default_items)
     db.commit()
 
     return RedirectResponse(url=f"/epatrika/{event.id}", status_code=303)
+
+# --- RSVP & Shagun Handlers ---
 
 @app.post("/rsvp/{event_id}")
 def post_rsvp(
@@ -150,6 +156,32 @@ def post_shagun(
     db.commit()
     return RedirectResponse(url=f"/epatrika/{event_id}?shagun_sent=1", status_code=303)
 
+# --- Registry & Wishlist Handlers ---
+
+@app.post("/registry/add/{event_id}")
+def add_registry_item(
+    event_id: int,
+    item_name: str = Form(...),
+    category: str = Form("Home"),
+    target_amount: float = Form(...),
+    db: Session = Depends(database.get_db)
+):
+    event = db.query(models.Event).filter(models.Event.id == event_id).first()
+    if not event:
+        raise HTTPException(status_code=404, detail="Wedding event not found")
+
+    new_item = models.RegistryItem(
+        event_id=event.id,
+        item_name=item_name.strip(),
+        category=category.strip(),
+        target_amount=target_amount,
+        collected_amount=0.0,
+        is_claimed=False
+    )
+    db.add(new_item)
+    db.commit()
+    return RedirectResponse(url=f"/epatrika/{event_id}#registry-section", status_code=303)
+
 @app.post("/registry/contribute/{item_id}")
 def contribute_registry(
     item_id: int,
@@ -160,9 +192,23 @@ def contribute_registry(
     item = db.query(models.RegistryItem).filter(models.RegistryItem.id == item_id).first()
     if not item:
         raise HTTPException(status_code=404, detail="Registry item not found")
+
     item.collected_amount += amount
     if item.collected_amount >= item.target_amount:
         item.is_claimed = True
         item.claimed_by = contributor_name
     db.commit()
     return RedirectResponse(url=f"/epatrika/{item.event_id}?gift_sent=1", status_code=303)
+
+@app.post("/registry/delete/{item_id}")
+def delete_registry_item(
+    item_id: int,
+    db: Session = Depends(database.get_db)
+):
+    item = db.query(models.RegistryItem).filter(models.RegistryItem.id == item_id).first()
+    if not item:
+        raise HTTPException(status_code=404, detail="Registry item not found")
+    
+    db.delete(item)
+    db.commit()
+    return RedirectResponse(url=f"/admin", status_code=303)
