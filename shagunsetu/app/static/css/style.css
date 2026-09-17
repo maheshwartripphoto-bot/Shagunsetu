@@ -1,101 +1,395 @@
-:root{
-  --emerald:#123C35;
-  --crimson:#7A1F2B;
-  --gold:#C8A45D;
-  --ivory:#FFF9F0;
-  --charcoal:#242424;
+/* =========================================================
+   SHAGUNSETU - ROYAL INDIAN WEDDING THEME & ANIMATIONS
+   Colors: Marigold Orange/Yellow, Banana Leaf Green, 
+           Mandap Crimson/Maroon, & Champagne Gold
+   ========================================================= */
+
+:root {
+  /* Royal Wedding Palette */
+  --mandap-crimson: #6b0f1a;
+  --mandap-maroon: #4d050c;
+  --marigold-orange: #f37021;
+  --marigold-yellow: #ffc107;
+  --marigold-gold: #e59400;
+  --banana-leaf-green: #1f5f38;
+  --banana-leaf-light: #2d8a52;
+  --banana-leaf-tint: rgba(31, 95, 56, 0.08);
+  --wedding-gold: #c5a059;
+  --wedding-gold-light: #fef4db;
+  --wedding-gold-gradient: linear-gradient(135deg, #bf953f 0%, #fcf6ba 30%, #b38728 60%, #fbf5b7 100%);
+  --ivory-silk: #fbf8f2;
+  --pure-white: #ffffff;
+  --text-primary: #2d1810;
+  --text-muted: #6b5850;
+  
+  /* Shadows & Transitions */
+  --shadow-elevation: 0 14px 38px rgba(107, 15, 26, 0.12), 0 6px 16px rgba(197, 160, 89, 0.15);
+  --border-radius-soft: 16px;
+  --transition-smooth: all 0.35s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
-*{box-sizing:border-box;}
-
-.ss-body{
-  background:var(--ivory);
-  color:var(--charcoal);
-  font-family:'Poppins',sans-serif;
-  margin:0;
+/* Base Document Setup */
+*, *::before, *::after {
+  box-sizing: border-box;
 }
 
-.font-display{font-family:'Cinzel',serif;}
-
-.text-emerald{color:var(--emerald);}
-.text-crimson{color:var(--crimson);}
-.text-gold{color:var(--gold);}
-.bg-emerald{background:var(--emerald);}
-.bg-crimson{background:var(--crimson);}
-.bg-gold{background:var(--gold);}
-.bg-ivory{background:var(--ivory);}
-.border-gold{border-color:var(--gold);}
-
-.ss-btn{
-  display:inline-flex;align-items:center;justify-content:center;gap:.5rem;
-  padding:.85rem 1.6rem;border-radius:999px;font-weight:600;
-  font-size:.95rem;transition:all .2s ease;cursor:pointer;border:none;
-}
-.ss-btn-primary{background:var(--emerald);color:var(--ivory);}
-.ss-btn-primary:hover{background:#0b2a25;transform:translateY(-1px);}
-.ss-btn-gold{background:var(--gold);color:var(--emerald);}
-.ss-btn-gold:hover{background:#b8924a;transform:translateY(-1px);}
-.ss-btn-crimson{background:var(--crimson);color:var(--ivory);}
-.ss-btn-crimson:hover{background:#5e1620;}
-.ss-btn-outline{background:transparent;border:1.5px solid var(--emerald);color:var(--emerald);}
-.ss-btn-outline:hover{background:var(--emerald);color:var(--ivory);}
-.ss-btn-outline-gold{background:transparent;border:1.5px solid var(--gold);color:var(--gold);}
-.ss-btn-outline-gold:hover{background:var(--gold);color:var(--emerald);}
-.ss-btn:disabled{opacity:.5;cursor:not-allowed;}
-
-.ss-card{
-  background:#fff;border-radius:1.25rem;box-shadow:0 10px 30px -10px rgba(18,60,53,.15);
-  border:1px solid rgba(200,164,93,.25);
+body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--ivory-silk);
+  color: var(--text-primary);
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 1.15rem;
+  line-height: 1.7;
+  position: relative;
+  min-height: 100vh;
+  overflow-x: hidden;
 }
 
-.ss-input, .ss-select, .ss-textarea{
-  width:100%;padding:.75rem 1rem;border-radius:.75rem;border:1.5px solid #e5ddd0;
-  background:#fff;font-family:'Poppins',sans-serif;font-size:.95rem;color:var(--charcoal);
-  outline:none;transition:border-color .15s ease;
-}
-.ss-input:focus, .ss-select:focus, .ss-textarea:focus{border-color:var(--gold);}
-.ss-label{display:block;font-size:.8rem;font-weight:600;color:var(--emerald);margin-bottom:.35rem;letter-spacing:.02em;}
-
-.ss-divider{
-  height:2px;
-  background:linear-gradient(90deg, transparent, var(--gold), transparent);
-  margin:2rem 0;
+/* Subtle Golden Texture on Body */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-image: radial-gradient(var(--wedding-gold) 1px, transparent 1px);
+  background-size: 28px 28px;
+  opacity: 0.18;
+  pointer-events: none;
+  z-index: 0;
 }
 
-.ss-mandala-bg{
-  background-image: radial-gradient(circle at 50% 50%, rgba(200,164,93,.08) 0, transparent 60%);
+/* =========================================================
+   ANIMATIONS & KEYFRAMES
+   ========================================================= */
+
+/* Floating Falling Petals / Floral Animation */
+@keyframes petalFall {
+  0% {
+    transform: translateY(-10vh) translateX(0) rotate(0deg);
+    opacity: 1;
+  }
+  50% {
+    transform: translateY(45vh) translateX(25px) rotate(180deg);
+    opacity: 0.85;
+  }
+  100% {
+    transform: translateY(105vh) translateX(-20px) rotate(360deg);
+    opacity: 0;
+  }
 }
 
-.ss-paisley-corner{
-  position:absolute; width:120px; height:120px; opacity:.15; pointer-events:none;
+/* Soft Shimmering Effect for Gold Badges & Text */
+@keyframes goldShimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
 }
 
-.hero-gradient{
-  background: linear-gradient(160deg, var(--emerald) 0%, #0b2a25 60%, var(--crimson) 140%);
+/* Mandap Pillars Subtle Pulsing Glow */
+@keyframes pillarGlow {
+  0%, 100% { box-shadow: 0 0 6px rgba(243, 112, 33, 0.3); }
+  50% { box-shadow: 0 0 16px rgba(255, 193, 7, 0.7); }
 }
 
-.ss-chip{
-  display:inline-flex;align-items:center;padding:.3rem .85rem;border-radius:999px;
-  font-size:.78rem;font-weight:600;background:rgba(200,164,93,.15);color:var(--emerald);
+/* Gentle Floating / Hover Element */
+@keyframes subtleFloat {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-6px); }
 }
 
-.ss-progress-dot{width:.6rem;height:.6rem;border-radius:999px;background:#e5ddd0;}
-.ss-progress-dot.active{background:var(--gold);}
-.ss-progress-dot.done{background:var(--emerald);}
-
-::-webkit-scrollbar{width:8px;height:8px;}
-::-webkit-scrollbar-thumb{background:var(--gold);border-radius:999px;}
-
-.ss-fade-in{animation:ssFadeIn .4s ease both;}
-@keyframes ssFadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
-
-.ss-scroll-x{overflow-x:auto;-webkit-overflow-scrolling:touch;}
-
-/* Toast */
-.ss-toast{
-  position:fixed;bottom:1.25rem;left:50%;transform:translateX(-50%);
-  background:var(--emerald);color:var(--ivory);padding:.85rem 1.5rem;border-radius:999px;
-  font-size:.9rem;box-shadow:0 10px 30px -10px rgba(0,0,0,.4);z-index:100;
-  opacity:0;transition:opacity .25s ease, transform .25s ease;pointer-events:none;
+/* Animated Petal Spawner */
+.petal {
+  position: fixed;
+  top: -20px;
+  width: 14px;
+  height: 20px;
+  background: radial-gradient(circle, #f37021 20%, #e25822 80%);
+  border-radius: 50% 50% 50% 0;
+  pointer-events: none;
+  z-index: 99;
+  animation: petalFall 12s linear infinite;
+  opacity: 0.8;
 }
-.ss-toast.show{opacity:1;transform:translateX(-50%) translateY(-6px);}
+
+.petal:nth-child(2n) {
+  width: 12px;
+  height: 16px;
+  background: radial-gradient(circle, #ffc107 20%, #e59400 80%);
+  animation-duration: 9s;
+  animation-delay: 2s;
+}
+
+.petal:nth-child(3n) {
+  width: 16px;
+  height: 22px;
+  background: radial-gradient(circle, #ffccd5 20%, #e85d75 80%);
+  animation-duration: 15s;
+  animation-delay: 4s;
+}
+
+/* =========================================================
+   BANANA LEAF & TORAN DECORATIVE WRAPPERS
+   ========================================================= */
+
+/* Banana Leaf Side Pillars */
+.banana-leaf-bg {
+  position: relative;
+  z-index: 1;
+  padding: 2rem 0;
+}
+
+.banana-leaf-bg::before,
+.banana-leaf-bg::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 65px;
+  opacity: 0.22;
+  pointer-events: none;
+  z-index: -1;
+  transition: opacity 0.3s ease;
+}
+
+/* Leaf veins styled with alternating angles */
+.banana-leaf-bg::before {
+  left: 0;
+  background: repeating-linear-gradient(
+    -50deg,
+    var(--banana-leaf-green),
+    var(--banana-leaf-green) 12px,
+    var(--banana-leaf-light) 12px,
+    var(--banana-leaf-light) 24px
+  );
+  border-right: 3px dashed var(--marigold-gold);
+}
+
+.banana-leaf-bg::after {
+  right: 0;
+  background: repeating-linear-gradient(
+    50deg,
+    var(--banana-leaf-green),
+    var(--banana-leaf-green) 12px,
+    var(--banana-leaf-light) 12px,
+    var(--banana-leaf-light) 24px
+  );
+  border-left: 3px dashed var(--marigold-gold);
+}
+
+@media (max-width: 768px) {
+  .banana-leaf-bg::before,
+  .banana-leaf-bg::after {
+    width: 25px;
+    opacity: 0.12;
+  }
+}
+
+/* Traditional Marigold Flower Garland (Toran) */
+.marigold-toran {
+  width: 100%;
+  height: 28px;
+  background: 
+    radial-gradient(circle at 12px 0, var(--marigold-orange) 8px, transparent 9px) repeat-x,
+    radial-gradient(circle at 24px 0, var(--marigold-yellow) 7px, transparent 8px) repeat-x;
+  background-size: 24px 28px;
+  filter: drop-shadow(0 4px 4px rgba(0, 0, 0, 0.12));
+  margin-bottom: 1.5rem;
+}
+
+.marigold-toran-bottom {
+  transform: rotate(180deg);
+  margin-top: 1.5rem;
+  margin-bottom: 0;
+}
+
+/* =========================================================
+   MANDAP FRAME & ROYAL INVITATION CARD
+   ========================================================= */
+
+.mandap-frame {
+  position: relative;
+  background: var(--pure-white);
+  border-radius: var(--border-radius-soft);
+  padding: 3.5rem 2.5rem;
+  border: 2px solid var(--wedding-gold);
+  box-shadow: var(--shadow-elevation);
+  margin: 1.5rem auto;
+  max-width: 820px;
+  z-index: 2;
+}
+
+/* Inner Gold Filigree Inset Border */
+.mandap-frame::before {
+  content: "";
+  position: absolute;
+  inset: 12px;
+  border: 1px solid rgba(197, 160, 89, 0.55);
+  border-radius: calc(var(--border-radius-soft) - 6px);
+  pointer-events: none;
+}
+
+/* Left & Right Glowing Mandap Pillars */
+.mandap-pillar-left,
+.mandap-pillar-right {
+  position: absolute;
+  top: 25px;
+  bottom: 25px;
+  width: 6px;
+  border-radius: 3px;
+  animation: pillarGlow 4s infinite ease-in-out;
+  background: repeating-linear-gradient(
+    to bottom,
+    var(--marigold-gold),
+    var(--marigold-gold) 12px,
+    var(--mandap-crimson) 12px,
+    var(--mandap-crimson) 24px
+  );
+}
+
+.mandap-pillar-left { left: 18px; }
+.mandap-pillar-right { right: 18px; }
+
+/* Mandap Dome Arch (Top Center) */
+.mandap-arch {
+  width: 140px;
+  height: 20px;
+  border-top: 3px solid var(--wedding-gold);
+  border-radius: 50% 50% 0 0;
+  margin: 0 auto 1rem;
+}
+
+/* =========================================================
+   TYPOGRAPHY & AUSPICIOUS ELEMENTS
+   ========================================================= */
+
+h1, h2, h3, h4, .wedding-title {
+  font-family: 'Cinzel Decorative', Georgia, serif;
+  color: var(--mandap-crimson);
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  margin-top: 0;
+}
+
+.auspicious-symbol {
+  font-size: 2rem;
+  color: var(--marigold-orange);
+  margin-bottom: 0.5rem;
+  animation: subtleFloat 3.5s ease-in-out infinite;
+  display: inline-block;
+}
+
+.couple-names {
+  font-family: 'Great Vibes', cursive, serif;
+  font-size: 3.8rem;
+  line-height: 1.2;
+  margin: 1.2rem 0;
+  background: var(--wedding-gold-gradient);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: goldShimmer 6s linear infinite;
+  filter: drop-shadow(0 1px 1px rgba(107, 15, 26, 0.1));
+}
+
+@media (max-width: 576px) {
+  .couple-names {
+    font-size: 2.8rem;
+  }
+}
+
+/* Ceremony & Muhurat Card */
+.ceremony-box {
+  background: var(--banana-leaf-tint);
+  border: 1px solid rgba(31, 95, 56, 0.2);
+  border-radius: 12px;
+  padding: 1.25rem;
+  margin: 1.5rem 0;
+  transition: var(--transition-smooth);
+}
+
+.ceremony-box:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(31, 95, 56, 0.1);
+}
+
+.ceremony-box h4 {
+  color: var(--banana-leaf-green);
+  font-size: 1.25rem;
+  margin-bottom: 0.3rem;
+}
+
+/* =========================================================
+   BUTTONS & ACTIONS
+   ========================================================= */
+
+.btn-wedding-gold {
+  background: var(--wedding-gold-gradient);
+  background-size: 200% auto;
+  color: var(--mandap-maroon);
+  font-family: 'Cinzel Decorative', Georgia, serif;
+  font-weight: 700;
+  border: 1px solid var(--wedding-gold);
+  border-radius: 50px;
+  padding: 0.85rem 2.2rem;
+  font-size: 0.95rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  box-shadow: 0 4px 14px rgba(212, 175, 55, 0.35);
+  cursor: pointer;
+  transition: var(--transition-smooth);
+  text-decoration: none;
+  display: inline-block;
+}
+
+.btn-wedding-gold:hover {
+  transform: translateY(-3px);
+  background-position: right center;
+  box-shadow: 0 6px 20px rgba(212, 175, 55, 0.55);
+  color: var(--mandap-crimson);
+}
+
+.btn-wedding-crimson {
+  background: var(--mandap-crimson);
+  color: var(--wedding-gold-light);
+  font-family: 'Cinzel Decorative', Georgia, serif;
+  font-weight: 600;
+  border: 1px solid var(--wedding-gold);
+  border-radius: 50px;
+  padding: 0.85rem 2.2rem;
+  font-size: 0.95rem;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+  text-decoration: none;
+  display: inline-block;
+}
+
+.btn-wedding-crimson:hover {
+  background: var(--mandap-maroon);
+  transform: translateY(-3px);
+  box-shadow: 0 6px 18px rgba(107, 15, 26, 0.3);
+  color: #ffffff;
+}
+
+/* Form Controls & Inputs */
+input[type="text"],
+input[type="date"],
+input[type="time"],
+textarea,
+select {
+  border: 1.5px solid rgba(197, 160, 89, 0.4);
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 1.1rem;
+  background-color: var(--pure-white);
+  color: var(--text-primary);
+  outline: none;
+  transition: var(--transition-smooth);
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  border-color: var(--marigold-orange);
+  box-shadow: 0 0 8px rgba(243, 112, 33, 0.25);
+}
