@@ -1,52 +1,60 @@
 {% extends "base.html" %}
 
-{% block title %}{{ event.groom_name }} & {{ event.bride_name }} - Wedding Invitation{% endblock %}
-
 {% block content %}
 <div style="max-width: 820px; margin: 1.5rem auto; padding: 0 1rem;">
   <div class="mandap-frame text-center">
     <div class="mandap-pillar-left"></div>
     <div class="mandap-pillar-right"></div>
-
     <div class="mandap-arch"></div>
     <div class="auspicious-symbol">卐 || वक्रतुण्ड महाकाय सूर्यकोटि समप्रभ || 卐</div>
 
-    <h2 class="wedding-title" style="font-size: 1.6rem; letter-spacing: 2px; margin-bottom: 0.2rem;">INVITATION TO SHUBH VIVAH</h2>
-    <p style="color: var(--text-muted); font-style: italic; margin-top: 0;">With the divine blessings of our ancestors and family</p>
+    <h2 class="wedding-title" style="font-size: 1.5rem; letter-spacing: 2px;">INVITATION TO SHUBH VIVAH</h2>
+    <p style="color: var(--text-muted); font-style: italic; margin-top: 0;">With the divine blessings of our ancestors and families</p>
 
-    <!-- Couple Monogram / Names -->
-    <div class="couple-names">
-      {{ event.groom_name }} &amp; {{ event.bride_name }}
-    </div>
+    <div class="couple-names">{{ event.groom_name }} &amp; {{ event.bride_name }}</div>
 
-    <p style="font-size: 1.25rem; margin-bottom: 2rem;">
-      cordially invite you and your family to celebrate the sacred bonds of holy matrimony.
-    </p>
-
-    <!-- Auspicious Mandap Muhurat Card -->
     <div class="ceremony-box" style="border: 2px dashed var(--wedding-gold);">
-      <h4>🌿 Main Wedding Ceremony &amp; Sacred Pheras 🌿</h4>
-      <p style="font-size: 1.2rem; font-weight: 600; margin: 0.4rem 0; color: var(--mandap-crimson);">
-        📅 Date: {{ event.event_date }}
+      <h4>🌿 Main Wedding Ceremony 🌿</h4>
+      <p style="font-size: 1.2rem; font-weight: bold; color: var(--mandap-crimson); margin: 0.3rem 0;">
+        📅 Date: {{ event.wedding_date }}
       </p>
-      <p style="font-size: 1.1rem; margin: 0.2rem 0;">
-        📍 Venue: <strong>{{ event.venue }}</strong>
-      </p>
-      {% if event.muhurat_time %}
-      <p style="font-size: 1.05rem; color: var(--marigold-orange); margin-top: 0.4rem; font-weight: 600;">
-        ✨ Auspicious Muhurat: {{ event.muhurat_time }}
-      </p>
-      {% endif %}
+      <p style="margin: 0.2rem 0;">📍 Venue: <strong>{{ event.venue }}</strong></p>
     </div>
 
-    <!-- RSVP CTA -->
-    <div style="margin-top: 2rem;">
-      <a href="/epatrika/{{ event.id }}" class="btn-wedding-gold" style="margin-right: 0.8rem;">View Full E-Patrika</a>
-      <button type="button" class="btn-wedding-crimson" onclick="navigator.clipboard.writeText(window.location.href); alert('Invitation link copied to clipboard!');">
-        Share Card 🔗
+    <!-- Quick Navigation & Share Buttons -->
+    <div style="display: flex; justify-content: center; gap: 0.8rem; flex-wrap: wrap; margin-top: 1.5rem;">
+      <a href="/epatrika/{{ event.id }}" class="btn-wedding-gold">Open Multi-Day Patrika &amp; Registry</a>
+      <button type="button" class="btn-wedding-crimson" onclick="shareOnWhatsApp('{{ event.groom_name }} & {{ event.bride_name }}')">
+        Share on WhatsApp 💬
       </button>
     </div>
 
+    <!-- RSVP Section -->
+    <div class="ceremony-box" style="margin-top: 2.5rem; text-align: left;">
+      <h4 style="text-align: center; color: var(--mandap-crimson); margin-bottom: 0.3rem;">💌 RSVP / उपस्थिति सूचना</h4>
+      
+      {% if request.query_params.get("rsvp_done") %}
+      <div style="background: rgba(31, 95, 56, 0.15); border: 1px solid var(--banana-leaf-green); border-radius: 8px; padding: 0.8rem; text-align: center; color: var(--banana-leaf-green); font-weight: 700; margin-bottom: 1rem;">
+        🌸 धन्यवाद! Your attendance and wishes have been submitted to the host.
+      </div>
+      {% endif %}
+
+      <form method="POST" action="/rsvp/{{ event.id }}" style="display: flex; flex-direction: column; gap: 0.8rem;">
+        <input type="text" name="guest_name" placeholder="Your Name" required style="width: 100%;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem;">
+          <input type="text" name="phone" placeholder="WhatsApp Number" style="width: 100%;">
+          <select name="attending" style="width: 100%;">
+            <option value="Yes">Will Attend (हाँ, अवश्य आएँगे)</option>
+            <option value="No">Regretfully Cannot (सप्रेम असमर्थ)</option>
+          </select>
+        </div>
+        <input type="number" name="guest_count" value="1" min="1" max="15" placeholder="Number of Guests" style="width: 100%;">
+        <textarea name="message" rows="2" placeholder="Blessings / Note for the couple..." style="width: 100%;"></textarea>
+        <div style="text-align: center;">
+          <button type="submit" class="btn-wedding-gold" style="width: 100%; max-width: 260px;">Confirm Attendance</button>
+        </div>
+      </form>
+    </div>
   </div>
 </div>
 {% endblock %}
