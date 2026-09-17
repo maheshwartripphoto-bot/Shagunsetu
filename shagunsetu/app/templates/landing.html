@@ -1,53 +1,49 @@
 {% extends "base.html" %}
 
-{% block title %}Welcome to ShagunSetu | Shubh Vivah Invitations{% endblock %}
-
 {% block content %}
-<div style="max-width: 900px; margin: 2rem auto; padding: 0 1rem;">
+<div style="max-width: 850px; margin: 2rem auto; padding: 0 1rem;">
   <div class="mandap-frame text-center">
     <div class="mandap-pillar-left"></div>
     <div class="mandap-pillar-right"></div>
-
     <div class="mandap-arch"></div>
     <div class="auspicious-symbol">卐 || श्री गणेशाय नमः || 卐</div>
 
-    <h1 class="wedding-title" style="font-size: 2.6rem; margin-bottom: 0.5rem;">ShagunSetu</h1>
-    <p style="font-size: 1.25rem; color: var(--text-muted); font-style: italic; margin-bottom: 1.5rem;">
-      Blending Sacred Traditions, Banana-Leaf Grace, and Eternal Blessings
+    <h1 class="wedding-title" style="font-size: 2.6rem;">ShagunSetu</h1>
+    <p style="font-size: 1.2rem; color: var(--text-muted); font-style: italic;">
+      Digital E-Patrika • Smart Digital Shagun • Curated Gift Registry
     </p>
 
-    <div style="width: 120px; height: 2px; background: var(--wedding-gold); margin: 1.5rem auto;"></div>
+    <div style="width: 100px; height: 2px; background: var(--wedding-gold); margin: 1.5rem auto;"></div>
 
-    <p style="max-width: 620px; margin: 0 auto 2rem; font-size: 1.2rem; line-height: 1.8;">
-      Create aesthetic digital e-patrikas, manage ceremonial RSVPs, and share your wedding muhurat in true royal style. Adorned with marigold garlands, sacred mandap pillars, and timeless Vedic elegance.
+    <p style="max-width: 620px; margin: 0 auto 2rem; font-size: 1.15rem; line-height: 1.8;">
+      Transform the Indian wedding experience. Send multi-day event schedules with dress codes and venue maps, collect direct UPI blessings with auspicious ₹1 coins, and curate crowd-funded gift wishlists.
     </p>
 
-    <div style="display: flex; justify-content: center; gap: 1.2rem; flex-wrap: wrap; margin-top: 1.5rem;">
-      <a href="/wizard" class="btn-wedding-gold">Create Invitation (ई-पत्रिका)</a>
-      <a href="/admin" class="btn-wedding-crimson">Manage RSVPs</a>
+    <div style="display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap;">
+      <a href="/wizard" class="btn-wedding-gold">Create E-Patrika &amp; Registry</a>
+      <a href="/admin" class="btn-wedding-crimson">Host Admin Panel</a>
     </div>
 
-    <!-- Festive Feature Highlights -->
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-top: 3rem; text-align: center;">
+    <!-- Core Value Pillars -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.2rem; margin-top: 3rem; text-align: center;">
       <div class="ceremony-box">
-        <div style="font-size: 2rem; margin-bottom: 0.5rem;">🌿</div>
-        <h4>Traditional Roots</h4>
-        <p style="margin: 0; font-size: 0.95rem; color: var(--text-muted);">Authentic banana leaf and toran framing for every ceremony.</p>
+        <div style="font-size: 1.8rem; margin-bottom: 0.3rem;">📜</div>
+        <h4>Multi-Day Logistics</h4>
+        <p style="margin: 0; font-size: 0.95rem; color: var(--text-muted);">Haldi, Mehendi, Sangeet &amp; Shaadi with Google Maps direction links.</p>
       </div>
 
       <div class="ceremony-box">
-        <div style="font-size: 2rem; margin-bottom: 0.5rem;">🪔</div>
-        <h4>Vedic Muhurats</h4>
-        <p style="margin: 0; font-size: 0.95rem; color: var(--text-muted);">Clear timelines for Haldi, Sangeet, Mandap, and Pheras.</p>
+        <div style="font-size: 1.8rem; margin-bottom: 0.3rem;">🪙</div>
+        <h4>Smart Digital Shagun</h4>
+        <p style="margin: 0; font-size: 0.95rem; color: var(--text-muted);">Direct GPay/PhonePe envelopes with preset auspicious ₹501, ₹1101, ₹2101 amounts.</p>
       </div>
 
       <div class="ceremony-box">
-        <div style="font-size: 2rem; margin-bottom: 0.5rem;">📜</div>
-        <h4>Digital Shagun</h4>
-        <p style="margin: 0; font-size: 0.95rem; color: var(--text-muted);">Seamless modern sharing with instant digital blessings.</p>
+        <div style="font-size: 1.8rem; margin-bottom: 0.3rem;">🎁</div>
+        <h4>Gift Registry</h4>
+        <p style="margin: 0; font-size: 0.95rem; color: var(--text-muted);">Avoid duplicate presents. Guests can claim or pool money toward honeymoons and home goods.</p>
       </div>
     </div>
-
   </div>
 </div>
 {% endblock %}
