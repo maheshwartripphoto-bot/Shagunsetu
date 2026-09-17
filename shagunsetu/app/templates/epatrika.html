@@ -1,7 +1,5 @@
 {% extends "base.html" %}
 
-{% block title %}{{ event.groom_name }} & {{ event.bride_name }} - E-Patrika{% endblock %}
-
 {% block content %}
 <div style="max-width: 900px; margin: 1.5rem auto; padding: 0 1rem;">
   <div class="mandap-frame">
@@ -11,80 +9,132 @@
     <div class="text-center">
       <div class="mandap-arch"></div>
       <div class="auspicious-symbol">卐 || ॐ श्री गणेशाय नमः || 卐</div>
-      <h1 class="wedding-title" style="font-size: 2.2rem; margin-bottom: 0.2rem;">विवाह पत्रिका</h1>
-      <p style="font-style: italic; color: var(--text-muted); margin-bottom: 1.5rem;">Two Souls, Seven Vows, One Eternal Journey</p>
-
-      <div class="couple-names">
-        {{ event.groom_name }} &amp; {{ event.bride_name }}
-      </div>
+      <h1 class="wedding-title">विवाह पत्रिका</h1>
+      <div class="couple-names">{{ event.groom_name }} &amp; {{ event.bride_name }}</div>
+      <p style="font-style: italic; color: var(--text-muted);">{{ event.host_family or "With best compliments from family and relatives." }}</p>
     </div>
 
-    <!-- Family Honor Section -->
-    <div style="background: rgba(243, 112, 33, 0.05); border-radius: 12px; padding: 1.5rem; border: 1px solid var(--wedding-gold); margin: 2rem 0; text-align: center;">
-      <h4 style="color: var(--mandap-crimson); margin-bottom: 0.4rem;">Blessings From Families</h4>
-      <p style="margin: 0; font-size: 1.15rem;">
-        {% if event.host_family %}
-          Cordially hosted by: <strong>{{ event.host_family }}</strong>
-        {% else %}
-          With best compliments from all relatives and friends
-        {% endif %}
-      </p>
-    </div>
-
-    <!-- Wedding Program Timeline -->
+    <!-- 1. MULTI-DAY ITINERARY & LOGISTICS -->
     <div style="margin: 2.5rem 0;">
-      <h3 style="text-align: center; color: var(--mandap-crimson); font-family: 'Cinzel Decorative', serif; margin-bottom: 1.5rem;">
-        🪔 Ceremonial Functions (कार्यक्रम) 🪔
+      <h3 style="text-align: center; color: var(--mandap-crimson); margin-bottom: 1.5rem;">
+        🪔 मांगलिक कार्यक्रम (Multi-Day Schedule) 🪔
       </h3>
-
       <div style="display: flex; flex-direction: column; gap: 1rem;">
-        <!-- Haldi Ceremony -->
-        <div class="ceremony-box" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
-          <div>
-            <h4 style="color: var(--marigold-orange);">🌻 Haldi Utsav</h4>
-            <p style="margin: 0;">Auspicious turmeric blessings &amp; celebration</p>
+        {% for c in event.ceremonies %}
+        <div class="ceremony-box">
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem;">
+            <div>
+              <h4 style="color: var(--marigold-orange); margin: 0;">{{ c.name }}</h4>
+              <p style="margin: 0.2rem 0; font-weight: 600;">📅 {{ c.date }} at {{ c.time }}</p>
+              <p style="margin: 0.2rem 0;">📍 {{ c.venue_name }}</p>
+              {% if c.dress_code %}
+              <span style="font-size: 0.9rem; background: rgba(197, 160, 89, 0.2); padding: 3px 8px; border-radius: 4px; display: inline-block; margin-top: 0.3rem;">
+                👗 Dress Code: {{ c.dress_code }}
+              </span>
+              {% endif %}
+            </div>
+            {% if c.maps_url %}
+            <a href="{{ c.maps_url }}" target="_blank" class="btn-wedding-crimson" style="padding: 0.4rem 0.9rem; font-size: 0.85rem;">
+              Directions 📍
+            </a>
+            {% endif %}
           </div>
-          <span style="font-weight: 700; color: var(--mandap-maroon); font-size: 1.1rem;">Morning Ceremony</span>
         </div>
-
-        <!-- Sangeet & Mehendi -->
-        <div class="ceremony-box" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
-          <div>
-            <h4 style="color: var(--banana-leaf-green);">🌿 Mehendi &amp; Sangeet Sandhya</h4>
-            <p style="margin: 0;">Traditional henna, music &amp; dance</p>
-          </div>
-          <span style="font-weight: 700; color: var(--mandap-maroon); font-size: 1.1rem;">Evening 7:00 PM</span>
-        </div>
-
-        <!-- Mandap Muhurat & Pheras -->
-        <div class="ceremony-box" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; border: 2px solid var(--wedding-gold);">
-          <div>
-            <h4 style="color: var(--mandap-crimson);">🔥 Mandap Muhurat &amp; Saat Pheras</h4>
-            <p style="margin: 0;">The sacred wedding vows around the agni kund</p>
-          </div>
-          <span style="font-weight: 700; color: var(--mandap-maroon); font-size: 1.1rem;">{{ event.event_date }}</span>
-        </div>
-
-        <!-- Reception / Preeti Bhoj -->
-        <div class="ceremony-box" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
-          <div>
-            <h4 style="color: var(--marigold-gold);">🍽️ Preeti Bhoj &amp; Reception</h4>
-            <p style="margin: 0;">Grand celebratory dinner &amp; blessings</p>
-          </div>
-          <span style="font-weight: 700; color: var(--mandap-maroon); font-size: 1.1rem;">Post Wedding</span>
-        </div>
+        {% endfor %}
       </div>
     </div>
 
-    <!-- Venue & Location Details -->
-    <div style="border-top: 1px solid var(--wedding-gold); padding-top: 1.5rem; text-align: center;">
-      <h4 style="color: var(--mandap-crimson);">📍 Wedding Venue</h4>
-      <p style="font-size: 1.2rem; font-weight: 600; margin: 0.3rem 0;">{{ event.venue }}</p>
-      <div style="margin-top: 1.5rem;">
-        <a href="/card/{{ event.id }}" class="btn-wedding-crimson">View Short Card</a>
+    <!-- 2. SMART DIGITAL SHAGUN ENVELOPE -->
+    <div class="ceremony-box" style="border: 2px solid var(--wedding-gold); padding: 2rem 1.5rem; margin: 3rem 0; text-align: center; background: #fffcf7;">
+      <h3 style="color: var(--mandap-crimson); margin-top: 0;">🪙 Smart Digital Shagun (डिजिटल शगुन)</h3>
+      <p style="color: var(--text-muted); font-size: 1rem;">
+        Gift directly into the couple's bank account with traditional ₹1 auspicious coin amounts.
+      </p>
+
+      <!-- Auspicious preset denominations -->
+      <div style="display: flex; justify-content: center; gap: 0.6rem; flex-wrap: wrap; margin: 1.2rem 0;">
+        <button type="button" class="btn-wedding-crimson" style="padding: 0.4rem 1.1rem;" onclick="selectShagunAmount(501)">₹501</button>
+        <button type="button" class="btn-wedding-crimson" style="padding: 0.4rem 1.1rem;" onclick="selectShagunAmount(1101)">₹1,101</button>
+        <button type="button" class="btn-wedding-crimson" style="padding: 0.4rem 1.1rem;" onclick="selectShagunAmount(2101)">₹2,101</button>
+        <button type="button" class="btn-wedding-crimson" style="padding: 0.4rem 1.1rem;" onclick="selectShagunAmount(5001)">₹5,001</button>
+      </div>
+
+      <form method="POST" action="/shagun/{{ event.id }}" style="max-width: 480px; margin: 0 auto; display: flex; flex-direction: column; gap: 0.8rem; text-align: left;">
+        <input type="text" name="sender_name" placeholder="Your Full Name" required style="width: 100%;">
+        <input type="number" id="shagun-amount-input" name="amount" value="1101" placeholder="Shagun Amount (₹)" required style="width: 100%;">
+        <textarea name="blessing_message" rows="2" placeholder="Personal blessing message for the couple..." style="width: 100%;"></textarea>
+
+        <div style="display: flex; gap: 0.6rem; justify-content: center; margin-top: 0.5rem; flex-wrap: wrap;">
+          <button type="button" class="btn-wedding-gold" style="flex: 1;" onclick="triggerUPIPayment('{{ event.upi_id }}', '{{ event.upi_payee_name }}')">
+            Send via UPI 📲
+          </button>
+          <button type="submit" class="btn-wedding-crimson" style="flex: 1;">
+            Record Note ✍️
+          </button>
+        </div>
+      </form>
+
+      <!-- Desktop QR Fallback Container -->
+      <div id="shagun-qr-modal" style="display: none; margin-top: 1.5rem;">
+        <p style="font-weight: bold; color: var(--mandap-crimson); margin-bottom: 0.5rem;">Scan with GPay / PhonePe / Paytm:</p>
+        <img id="shagun-qr-image" src="" alt="UPI Shagun QR" style="border: 2px solid var(--wedding-gold); border-radius: 8px; padding: 4px; background: #fff;">
       </div>
     </div>
 
+    <!-- 3. CURATED GIFT REGISTRY -->
+    <div style="margin: 3rem 0;">
+      <h3 style="text-align: center; color: var(--mandap-crimson);">🎁 Curated Wedding Gift Registry</h3>
+      <p style="text-align: center; color: var(--text-muted); font-size: 1rem;">
+        Help Rahul &amp; Priya build their home or fund their honeymoon. Claim full gifts or chip in together!
+      </p>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.2rem; margin-top: 1.5rem;">
+        {% for item in event.registry_items %}
+        <div class="ceremony-box" style="display: flex; flex-direction: column; justify-content: space-between;">
+          <div>
+            <span style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; color: var(--marigold-orange); font-weight: bold;">
+              {{ item.category }}
+            </span>
+            <h4 style="margin: 0.3rem 0; color: var(--mandap-crimson);">{{ item.item_name }}</h4>
+            <p style="margin: 0.2rem 0; font-weight: 600;">Target: ₹{{ "%.0f"|format(item.target_amount) }}</p>
+            
+            <!-- Progress Bar -->
+            <div style="width: 100%; background: rgba(0,0,0,0.08); height: 8px; border-radius: 4px; overflow: hidden; margin: 0.6rem 0;">
+              <div style="background: var(--banana-leaf-green); height: 100%; width: {{ (item.collected_amount / item.target_amount * 100)|round }}%;"></div>
+            </div>
+            <small style="color: var(--text-muted);">₹{{ "%.0f"|format(item.collected_amount) }} raised</small>
+          </div>
+
+          <div style="margin-top: 1rem;">
+            {% if item.is_claimed %}
+              <span style="color: var(--banana-leaf-green); font-weight: bold; font-size: 0.95rem;">✓ Claimed by {{ item.claimed_by }}</span>
+            {% else %}
+              <button type="button" class="btn-wedding-gold" style="width: 100%; padding: 0.4rem; font-size: 0.85rem;"
+                onclick="openRegistryContribution({{ item.id }}, '{{ item.item_name }}', {{ item.target_amount - item.collected_amount }})">
+                Contribute / Claim 🎁
+              </button>
+            {% endif %}
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Registry Modal Container -->
+<div id="registry-modal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 9999; justify-content: center; align-items: center; padding: 1rem;">
+  <div style="background: #fff; border-radius: 12px; border: 2px solid var(--wedding-gold); padding: 2rem; max-width: 450px; width: 100%; text-align: center;">
+    <h3 id="registry-modal-title" style="color: var(--mandap-crimson); margin-top: 0;">Contribute to Gift</h3>
+    <form id="registry-form" method="POST" action="" style="display: flex; flex-direction: column; gap: 0.8rem; margin-top: 1rem;">
+      <input type="text" name="contributor_name" placeholder="Your Name" required style="width: 100%;">
+      <input type="number" id="registry-amount-input" name="amount" placeholder="Contribution Amount (₹)" required style="width: 100%;">
+      <div style="display: flex; gap: 0.6rem; justify-content: center; margin-top: 0.5rem;">
+        <button type="submit" class="btn-wedding-gold" style="flex: 1;">Pay &amp; Claim</button>
+        <button type="button" class="btn-wedding-crimson" style="flex: 1;" onclick="closeRegistryModal()">Cancel</button>
+      </div>
+    </form>
   </div>
 </div>
 {% endblock %}
