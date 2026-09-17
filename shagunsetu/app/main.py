@@ -9,72 +9,109 @@ from sqlalchemy.orm import Session
 from . import models, database
 
 app = FastAPI(title="ShagunSetu")
-
 BASE_DIR = Path(__file__).resolve().parent
 
-# Ensure tables exist
 models.Base.metadata.create_all(bind=database.engine)
 
-# Static & Template mounting with absolute paths to prevent 404s
 app.mount("/static", StaticFiles(directory=str(BASE_DIR / "static")), name="static")
 templates = Jinja2Templates(directory=str(BASE_DIR / "templates"))
 
-# --- Page Routes ---
-
 @app.get("/", response_class=HTMLResponse)
-def page_landing(request: Request):
+def landing_view(request: Request):
     return templates.TemplateResponse("landing.html", {"request": request})
 
 @app.get("/wizard", response_class=HTMLResponse)
-def page_wizard(request: Request):
+def wizard_view(request: Request):
     return templates.TemplateResponse("wizard.html", {"request": request})
 
-@app.get("/admin", response_class=HTMLResponse)
-def page_admin(request: Request, db: Session = Depends(database.get_db)):
-    events = db.query(models.Event).order_by(models.Event.id.desc()).all()
-    return templates.TemplateResponse("admin.html", {"request": request, "events": events})
-
 @app.get("/card/{event_id}", response_class=HTMLResponse)
-def page_card(request: Request, event_id: int, db: Session = Depends(database.get_db)):
+def card_view(request: Request, event_id: int, db: Session = Depends(database.get_db)):
     event = db.query(models.Event).filter(models.Event.id == event_id).first()
     if not event:
-        raise HTTPException(status_code=404, detail="Wedding invitation not found")
+        raise HTTPException(status_code=404, detail="Invitation not found")
     return templates.TemplateResponse("card.html", {"request": request, "event": event})
 
 @app.get("/epatrika/{event_id}", response_class=HTMLResponse)
-def page_epatrika(request: Request, event_id: int, db: Session = Depends(database.get_db)):
+def epatrika_view(request: Request, event_id: int, db: Session = Depends(database.get_db)):
     event = db.query(models.Event).filter(models.Event.id == event_id).first()
     if not event:
         raise HTTPException(status_code=404, detail="E-Patrika not found")
     return templates.TemplateResponse("epatrika.html", {"request": request, "event": event})
 
-# --- Form Action Endpoints ---
+@app.get("/admin", response_class=HTMLResponse)
+def admin_view(request: Request, db: Session = Depends(database.get_db)):
+    events = db.query(models.Event).order_by(models.Event.id.desc()).all()
+    return templates.TemplateResponse("admin.html", {"request": request, "events": events})
 
 @app.post("/create")
 def create_event(
     groom_name: str = Form(...),
     bride_name: str = Form(...),
-    event_date: str = Form(...),
-    muhurat_time: str = Form(None),
+    wedding_date: str = Form(...),
     venue: str = Form(...),
+    upi_id: str = Form(...),
+    upi_payee_name: str = Form(...),
     host_family: str = Form(None),
     db: Session = Depends(database.get_db)
 ):
     event = models.Event(
         groom_name=groom_name.strip(),
         bride_name=bride_name.strip(),
-        event_date=str(event_date),
-        muhurat_time=muhurat_time.strip() if muhurat_time else None,
+        wedding_date=wedding_date,
         venue=venue.strip(),
+        upi_id=upi_id.strip(),
+        upi_payee_name=upi_payee_name.strip(),
         host_family=host_family.strip() if host_family else None
     )
     db.add(event)
     db.commit()
     db.refresh(event)
-    return RedirectResponse(url=f"/card/{event.id}", status_code=303)
+
+    # Seed core traditional ceremonies
+    ceremonies = [
+        models.Ceremony(
+            event_id=event.id,
+            name="Haldi & Mehendi Rasam",
+            date=wedding_date,
+            time="10:00 AM",
+            venue_name=venue,
+            maps_url=f"https://www.google.com/maps/search/?api=1&query={venue.replace(' ', '+')}",
+            dress_code="Shades of Yellow & Floral Prints"
+        ),
+        models.Ceremony(
+            event_id=event.id,
+            name="Sangeet Sandhya",
+            date=wedding_date,
+            time="07:00 PM",
+            venue_name=venue,
+            maps_url=f"https://www.google.com/maps/search/?api=1&query={venue.replace(' ', '+')}",
+            dress_code="Indo-Western / Evening Glam"
+        ),
+        models.Ceremony(
+            event_id=event.id,
+            name="Mandap Muhurat & Saat Pheras",
+            date=wedding_date,
+            time="11:00 PM",
+            venue_name=venue,
+            maps_url=f"https://www.google.com/maps/search/?api=1&query={venue.replace(' ', '+')}",
+            dress_code="Traditional Ethnic Silks"
+        )
+    ]
+    db.add_all(ceremonies)
+
+    # Seed starter registry items
+    items = [
+        models.RegistryItem(event_id=event.id, item_name="Smart Home Kitchen Suite", category="Appliances", target_amount=15000),
+        models.RegistryItem(event_id=event.id, item_name="Honeymoon Flight Fund", category="Travel", target_amount=25000),
+        models.RegistryItem(event_id=event.id, item_name="Living Room Brass Decor", category="Home", target_amount=8000)
+    ]
+    db.add_all(items)
+    db.commit()
+
+    return RedirectResponse(url=f"/epatrika/{event.id}", status_code=303)
 
 @app.post("/rsvp/{event_id}")
-def submit_rsvp(
+def post_rsvp(
     event_id: int,
     guest_name: str = Form(...),
     phone: str = Form(None),
@@ -83,12 +120,8 @@ def submit_rsvp(
     message: str = Form(None),
     db: Session = Depends(database.get_db)
 ):
-    event = db.query(models.Event).filter(models.Event.id == event_id).first()
-    if not event:
-        raise HTTPException(status_code=404, detail="Wedding event does not exist")
-
     rsvp = models.RSVP(
-        event_id=event.id,
+        event_id=event_id,
         guest_name=guest_name.strip(),
         phone=phone.strip() if phone else None,
         attending=attending,
@@ -97,4 +130,39 @@ def submit_rsvp(
     )
     db.add(rsvp)
     db.commit()
-    return RedirectResponse(url=f"/card/{event_id}?rsvp_success=1", status_code=303)
+    return RedirectResponse(url=f"/card/{event_id}?rsvp_done=1", status_code=303)
+
+@app.post("/shagun/{event_id}")
+def post_shagun(
+    event_id: int,
+    sender_name: str = Form(...),
+    amount: float = Form(...),
+    blessing_message: str = Form(None),
+    db: Session = Depends(database.get_db)
+):
+    entry = models.ShagunEntry(
+        event_id=event_id,
+        sender_name=sender_name.strip(),
+        amount=amount,
+        blessing_message=blessing_message.strip() if blessing_message else None
+    )
+    db.add(entry)
+    db.commit()
+    return RedirectResponse(url=f"/epatrika/{event_id}?shagun_sent=1", status_code=303)
+
+@app.post("/registry/contribute/{item_id}")
+def contribute_registry(
+    item_id: int,
+    contributor_name: str = Form(...),
+    amount: float = Form(...),
+    db: Session = Depends(database.get_db)
+):
+    item = db.query(models.RegistryItem).filter(models.RegistryItem.id == item_id).first()
+    if not item:
+        raise HTTPException(status_code=404, detail="Registry item not found")
+    item.collected_amount += amount
+    if item.collected_amount >= item.target_amount:
+        item.is_claimed = True
+        item.claimed_by = contributor_name
+    db.commit()
+    return RedirectResponse(url=f"/epatrika/{item.event_id}?gift_sent=1", status_code=303)
