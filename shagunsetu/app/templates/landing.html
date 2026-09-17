@@ -1,72 +1,53 @@
 {% extends "base.html" %}
+
+{% block title %}Welcome to ShagunSetu | Shubh Vivah Invitations{% endblock %}
+
 {% block content %}
+<div style="max-width: 900px; margin: 2rem auto; padding: 0 1rem;">
+  <div class="mandap-frame text-center">
+    <div class="mandap-pillar-left"></div>
+    <div class="mandap-pillar-right"></div>
 
-<nav class="max-w-6xl mx-auto px-5 py-6 flex items-center justify-between">
-  <div class="font-display text-xl text-emerald font-semibold tracking-wide">Shagun<span class="text-gold">Setu</span></div>
-  <a href="/create" class="ss-btn ss-btn-primary text-sm">✨ Create Your Wedding</a>
-</nav>
+    <div class="mandap-arch"></div>
+    <div class="auspicious-symbol">卐 || श्री गणेशाय नमः || 卐</div>
 
-<header class="relative hero-gradient text-ivory overflow-hidden">
-  <div class="max-w-4xl mx-auto px-5 py-24 text-center relative z-10 ss-fade-in">
-    <p class="font-display tracking-[0.3em] text-gold text-sm mb-4">|| \u0936\u094d\u0930\u0940 \u0917\u0923\u0947\u0936\u093e\u092f \u0928\u092e\u0903 ||</p>
-    <h1 class="font-display text-4xl sm:text-6xl leading-tight mb-6">Your Wedding.<br><span class="text-gold">One Beautiful Link.</span></h1>
-    <p class="text-ivory/80 max-w-xl mx-auto mb-10 text-base sm:text-lg">
-      Digital invitations, RSVPs, Shagun and a gift registry — all in one elegant e-patrika your guests will love opening.
+    <h1 class="wedding-title" style="font-size: 2.6rem; margin-bottom: 0.5rem;">ShagunSetu</h1>
+    <p style="font-size: 1.25rem; color: var(--text-muted); font-style: italic; margin-bottom: 1.5rem;">
+      Blending Sacred Traditions, Banana-Leaf Grace, and Eternal Blessings
     </p>
-    <div class="flex flex-col sm:flex-row gap-4 justify-center">
-      <a href="/create" class="ss-btn ss-btn-gold text-base px-8 py-4">✨ Create Your Wedding</a>
-      <a href="#how" class="ss-btn ss-btn-outline-gold text-base px-8 py-4">See How It Works</a>
+
+    <div style="width: 120px; height: 2px; background: var(--wedding-gold); margin: 1.5rem auto;"></div>
+
+    <p style="max-width: 620px; margin: 0 auto 2rem; font-size: 1.2rem; line-height: 1.8;">
+      Create aesthetic digital e-patrikas, manage ceremonial RSVPs, and share your wedding muhurat in true royal style. Adorned with marigold garlands, sacred mandap pillars, and timeless Vedic elegance.
+    </p>
+
+    <div style="display: flex; justify-content: center; gap: 1.2rem; flex-wrap: wrap; margin-top: 1.5rem;">
+      <a href="/wizard" class="btn-wedding-gold">Create Invitation (ई-पत्रिका)</a>
+      <a href="/admin" class="btn-wedding-crimson">Manage RSVPs</a>
     </div>
-  </div>
-  <div class="absolute inset-0 ss-mandala-bg"></div>
-</header>
 
-<section id="how" class="max-w-6xl mx-auto px-5 py-20">
-  <h2 class="font-display text-3xl text-center text-emerald mb-2">Everything for your big day</h2>
-  <p class="text-center text-charcoal/60 mb-12">One platform, every celebration detail — beautifully arranged.</p>
-  <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-    {% for icon, title, desc in [
-      ('💌','Digital E-Patrika','A stunning, mobile-first invitation with your story, events and countdown.'),
-      ('✅','Smart RSVP','Guests confirm attendance, headcount and dietary preference in seconds.'),
-      ('🪔','Digital Shagun','Accept blessings via UPI — preset amounts, custom amounts, auspicious ₹1 token.'),
-      ('🎁','Gift Registry','Curated wishlist with exclusive and group gifts guests can claim or fund.'),
-      ('🖼️','Shareable Card','A gorgeous save-the-date card ready to download and share on WhatsApp.'),
-      ('💬','Blessings Wall','A living wall of love and good wishes from everyone who cares about you.'),
-    ] %}
-    <div class="ss-card p-7">
-      <div class="text-3xl mb-3">{{ icon }}</div>
-      <h3 class="font-display text-lg text-emerald mb-2">{{ title }}</h3>
-      <p class="text-sm text-charcoal/70 leading-relaxed">{{ desc }}</p>
+    <!-- Festive Feature Highlights -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-top: 3rem; text-align: center;">
+      <div class="ceremony-box">
+        <div style="font-size: 2rem; margin-bottom: 0.5rem;">🌿</div>
+        <h4>Traditional Roots</h4>
+        <p style="margin: 0; font-size: 0.95rem; color: var(--text-muted);">Authentic banana leaf and toran framing for every ceremony.</p>
+      </div>
+
+      <div class="ceremony-box">
+        <div style="font-size: 2rem; margin-bottom: 0.5rem;">🪔</div>
+        <h4>Vedic Muhurats</h4>
+        <p style="margin: 0; font-size: 0.95rem; color: var(--text-muted);">Clear timelines for Haldi, Sangeet, Mandap, and Pheras.</p>
+      </div>
+
+      <div class="ceremony-box">
+        <div style="font-size: 2rem; margin-bottom: 0.5rem;">📜</div>
+        <h4>Digital Shagun</h4>
+        <p style="margin: 0; font-size: 0.95rem; color: var(--text-muted);">Seamless modern sharing with instant digital blessings.</p>
+      </div>
     </div>
-    {% endfor %}
+
   </div>
-</section>
-
-{% if recent %}
-<section class="max-w-6xl mx-auto px-5 py-12">
-  <h2 class="font-display text-2xl text-emerald mb-6">Recently created</h2>
-  <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-    {% for w in recent %}
-    <a href="/w/{{ w.slug }}" class="ss-card p-6 block hover:-translate-y-1 transition">
-      <p class="ss-chip mb-3">{{ w.wedding_date }}</p>
-      <h3 class="font-display text-xl text-emerald">{{ w.bride_name }} & {{ w.groom_name }}</h3>
-      <p class="text-sm text-charcoal/60 mt-1">{{ w.city }}</p>
-    </a>
-    {% endfor %}
-  </div>
-</section>
-{% endif %}
-
-<section class="hero-gradient text-ivory py-16 mt-8">
-  <div class="max-w-2xl mx-auto text-center px-5">
-    <h2 class="font-display text-3xl mb-4">Ready to begin?</h2>
-    <p class="text-ivory/80 mb-8">Set up your entire wedding invitation in under five minutes.</p>
-    <a href="/create" class="ss-btn ss-btn-gold text-base px-8 py-4">✨ Create Your Wedding</a>
-  </div>
-</section>
-
-<footer class="text-center py-8 text-sm text-charcoal/50">
-  Made with ❤️ — ShagunSetu · A prototype wedding platform
-</footer>
-
+</div>
 {% endblock %}
