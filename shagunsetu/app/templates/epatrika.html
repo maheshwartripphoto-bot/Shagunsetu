@@ -14,14 +14,64 @@
       <p style="font-style: italic; color: var(--text-muted);">{{ event.host_family or "With best compliments from family and relatives." }}</p>
     </div>
 
-    <!-- 1. MULTI-DAY ITINERARY & LOGISTICS -->
-    <div style="margin: 2.5rem 0;">
-      <h3 style="text-align: center; color: var(--mandap-crimson); margin-bottom: 1.5rem;">
-        🪔 मांगलिक कार्यक्रम (Multi-Day Schedule) 🪔
+    <!-- 1. MULTI-DAY ITINERARY & USER CEREMONY ADDITION -->
+    <div id="ceremonies-section" style="margin: 2.5rem 0;">
+      <h3 style="text-align: center; color: var(--mandap-crimson); margin-bottom: 0.5rem;">
+        🪔 मांगलिक कार्यक्रम (Wedding Functions &amp; Itinerary) 🪔
       </h3>
+      <p style="text-align: center; color: var(--text-muted); font-size: 0.95rem; margin-bottom: 1.5rem;">
+        Multi-day ceremonial schedule with location links and dress codes.
+      </p>
+
+      <!-- Host / User Action: Add Custom Ceremony Function Form -->
+      <details class="ceremony-box" style="margin-bottom: 1.8rem; border: 1.5px dashed var(--marigold-orange); background: #fffcf5;">
+        <summary style="font-weight: 700; color: var(--mandap-crimson); cursor: pointer; font-family: 'Cinzel Decorative', serif;">
+          ✨ Host Corner: + Add Another Ceremony (Haldi, Sangeet, Reception...)
+        </summary>
+        
+        <form method="POST" action="/ceremony/add/{{ event.id }}" style="display: flex; flex-direction: column; gap: 0.9rem; margin-top: 1.2rem;">
+          <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 0.8rem;">
+            <div>
+              <label style="display: block; font-size: 0.85rem; font-weight: 600;">Ceremony / Event Name</label>
+              <input type="text" name="name" placeholder="e.g. Haldi Utsav / Sangeet Night" required style="width: 100%;">
+            </div>
+            <div>
+              <label style="display: block; font-size: 0.85rem; font-weight: 600;">Date</label>
+              <input type="date" name="date" required style="width: 100%;">
+            </div>
+            <div>
+              <label style="display: block; font-size: 0.85rem; font-weight: 600;">Time</label>
+              <input type="text" name="time" placeholder="e.g. 05:00 PM" required style="width: 100%;">
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1.5fr 1.5fr 1fr; gap: 0.8rem;">
+            <div>
+              <label style="display: block; font-size: 0.85rem; font-weight: 600;">Venue Name</label>
+              <input type="text" name="venue_name" placeholder="e.g. Poolside Lawn, Sayaji Hotel" required style="width: 100%;">
+            </div>
+            <div>
+              <label style="display: block; font-size: 0.85rem; font-weight: 600;">Google Maps URL (Optional)</label>
+              <input type="url" name="maps_url" placeholder="https://maps.app.goo.gl/..." style="width: 100%;">
+            </div>
+            <div>
+              <label style="display: block; font-size: 0.85rem; font-weight: 600;">Dress Code</label>
+              <input type="text" name="dress_code" placeholder="e.g. Bright Yellow / Royal Ethnic" style="width: 100%;">
+            </div>
+          </div>
+
+          <div style="text-align: right;">
+            <button type="submit" class="btn-wedding-gold" style="padding: 0.5rem 1.4rem; font-size: 0.85rem;">
+              Save Ceremony ✨
+            </button>
+          </div>
+        </form>
+      </details>
+
+      <!-- Listed Ceremonies -->
       <div style="display: flex; flex-direction: column; gap: 1rem;">
         {% for c in event.ceremonies %}
-        <div class="ceremony-box">
+        <div class="ceremony-box" style="position: relative;">
           <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem;">
             <div>
               <h4 style="color: var(--marigold-orange); margin: 0;">{{ c.name }}</h4>
@@ -33,11 +83,19 @@
               </span>
               {% endif %}
             </div>
-            {% if c.maps_url %}
-            <a href="{{ c.maps_url }}" target="_blank" class="btn-wedding-crimson" style="padding: 0.4rem 0.9rem; font-size: 0.85rem;">
-              Directions 📍
-            </a>
-            {% endif %}
+
+            <div style="display: flex; align-items: center; gap: 0.6rem;">
+              {% if c.maps_url %}
+              <a href="{{ c.maps_url }}" target="_blank" class="btn-wedding-crimson" style="padding: 0.4rem 0.9rem; font-size: 0.85rem;">
+                Directions 📍
+              </a>
+              {% endif %}
+              <form method="POST" action="/ceremony/delete/{{ c.id }}" onsubmit="return confirm('Remove this ceremony from the itinerary?');">
+                <button type="submit" title="Remove Function" style="background: transparent; border: none; color: #b00; cursor: pointer; font-size: 1.1rem; padding: 4px;">
+                  ✕
+                </button>
+              </form>
+            </div>
           </div>
         </div>
         {% endfor %}
@@ -48,10 +106,9 @@
     <div class="ceremony-box" style="border: 2px solid var(--wedding-gold); padding: 2rem 1.5rem; margin: 3rem 0; text-align: center; background: #fffcf7;">
       <h3 style="color: var(--mandap-crimson); margin-top: 0;">🪙 Smart Digital Shagun (डिजिटल शगुन)</h3>
       <p style="color: var(--text-muted); font-size: 1rem;">
-        Gift directly into the couple's bank account with traditional ₹1 auspicious coin amounts.
+        Gift directly into the couple's bank account with traditional auspicious amounts.
       </p>
 
-      <!-- Auspicious preset denominations -->
       <div style="display: flex; justify-content: center; gap: 0.6rem; flex-wrap: wrap; margin: 1.2rem 0;">
         <button type="button" class="btn-wedding-crimson" style="padding: 0.4rem 1.1rem;" onclick="selectShagunAmount(501)">₹501</button>
         <button type="button" class="btn-wedding-crimson" style="padding: 0.4rem 1.1rem;" onclick="selectShagunAmount(1101)">₹1,101</button>
@@ -74,21 +131,50 @@
         </div>
       </form>
 
-      <!-- Desktop QR Fallback Container -->
       <div id="shagun-qr-modal" style="display: none; margin-top: 1.5rem;">
-        <p style="font-weight: bold; color: var(--mandap-crimson); margin-bottom: 0.5rem;">Scan with GPay / PhonePe / Paytm:</p>
-        <img id="shagun-qr-image" src="" alt="UPI Shagun QR" style="border: 2px solid var(--wedding-gold); border-radius: 8px; padding: 4px; background: #fff;">
+        <p style="font-weight: bold; color: var(--mandap-crimson); margin-bottom: 0.5rem;">Scan via GPay / PhonePe / Paytm:</p>
+        <img id="shagun-qr-image" src="" alt="UPI QR" style="border: 2px solid var(--wedding-gold); border-radius: 8px; padding: 4px; background: #fff;">
       </div>
     </div>
 
-    <!-- 3. CURATED GIFT REGISTRY -->
-    <div style="margin: 3rem 0;">
+    <!-- 3. CURATED GIFT REGISTRY & COUPLE WISHLIST -->
+    <div id="registry-section" style="margin: 3rem 0;">
       <h3 style="text-align: center; color: var(--mandap-crimson);">🎁 Curated Wedding Gift Registry</h3>
       <p style="text-align: center; color: var(--text-muted); font-size: 1rem;">
-        Help Rahul &amp; Priya build their home or fund their honeymoon. Claim full gifts or chip in together!
+        Contribute towards high-utility gifts or couple funds to celebrate their new beginning.
       </p>
 
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.2rem; margin-top: 1.5rem;">
+      <details class="ceremony-box" style="margin-bottom: 2rem; border: 1.5px dashed var(--marigold-orange); background: #fffcf5;">
+        <summary style="font-weight: 700; color: var(--mandap-crimson); cursor: pointer; font-family: 'Cinzel Decorative', serif;">
+          ✨ Couple's Corner: + Add New Gift to Wishlist
+        </summary>
+        <form method="POST" action="/registry/add/{{ event.id }}" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)) auto; gap: 0.8rem; margin-top: 1.2rem; align-items: end;">
+          <div>
+            <label style="display: block; font-size: 0.9rem; font-weight: 600;">Gift / Fund Name</label>
+            <input type="text" name="item_name" placeholder="e.g. Espresso Machine" required style="width: 100%;">
+          </div>
+          <div>
+            <label style="display: block; font-size: 0.9rem; font-weight: 600;">Category</label>
+            <select name="category" style="width: 100%;">
+              <option value="Home">Home &amp; Decor</option>
+              <option value="Appliances">Kitchen &amp; Tech</option>
+              <option value="Travel">Honeymoon Fund</option>
+              <option value="Experience">Dining &amp; Stay</option>
+            </select>
+          </div>
+          <div>
+            <label style="display: block; font-size: 0.9rem; font-weight: 600;">Target Amount (₹)</label>
+            <input type="number" name="target_amount" min="100" step="50" placeholder="e.g. 5000" required style="width: 100%;">
+          </div>
+          <div>
+            <button type="submit" class="btn-wedding-gold" style="padding: 0.7rem 1.2rem; font-size: 0.85rem;">
+              Add Wish ✨
+            </button>
+          </div>
+        </form>
+      </details>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.2rem;">
         {% for item in event.registry_items %}
         <div class="ceremony-box" style="display: flex; flex-direction: column; justify-content: space-between;">
           <div>
@@ -98,7 +184,6 @@
             <h4 style="margin: 0.3rem 0; color: var(--mandap-crimson);">{{ item.item_name }}</h4>
             <p style="margin: 0.2rem 0; font-weight: 600;">Target: ₹{{ "%.0f"|format(item.target_amount) }}</p>
             
-            <!-- Progress Bar -->
             <div style="width: 100%; background: rgba(0,0,0,0.08); height: 8px; border-radius: 4px; overflow: hidden; margin: 0.6rem 0;">
               <div style="background: var(--banana-leaf-green); height: 100%; width: {{ (item.collected_amount / item.target_amount * 100)|round }}%;"></div>
             </div>
@@ -107,7 +192,7 @@
 
           <div style="margin-top: 1rem;">
             {% if item.is_claimed %}
-              <span style="color: var(--banana-leaf-green); font-weight: bold; font-size: 0.95rem;">✓ Claimed by {{ item.claimed_by }}</span>
+              <span style="color: var(--banana-leaf-green); font-weight: bold; font-size: 0.95rem;">✓ Fully Gifted by {{ item.claimed_by }}</span>
             {% else %}
               <button type="button" class="btn-wedding-gold" style="width: 100%; padding: 0.4rem; font-size: 0.85rem;"
                 onclick="openRegistryContribution({{ item.id }}, '{{ item.item_name }}', {{ item.target_amount - item.collected_amount }})">
@@ -123,7 +208,7 @@
   </div>
 </div>
 
-<!-- Registry Modal Container -->
+<!-- Modal Dialog for Registry Contribution -->
 <div id="registry-modal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 9999; justify-content: center; align-items: center; padding: 1rem;">
   <div style="background: #fff; border-radius: 12px; border: 2px solid var(--wedding-gold); padding: 2rem; max-width: 450px; width: 100%; text-align: center;">
     <h3 id="registry-modal-title" style="color: var(--mandap-crimson); margin-top: 0;">Contribute to Gift</h3>
